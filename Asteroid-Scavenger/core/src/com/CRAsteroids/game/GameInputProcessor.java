@@ -1,5 +1,6 @@
 package com.CRAsteroids.game;
 
+import com.CRAsteroids.game.Objects.Player;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
 

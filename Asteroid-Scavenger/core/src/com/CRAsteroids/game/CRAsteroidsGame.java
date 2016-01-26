@@ -1,5 +1,8 @@
 package com.CRAsteroids.game;
 
+import com.CRAsteroids.game.Objects.Player;
+import com.CRAsteroids.game.STATES.GameStateManager;
+import com.CRAsteroids.game.STATES.PlayState;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
