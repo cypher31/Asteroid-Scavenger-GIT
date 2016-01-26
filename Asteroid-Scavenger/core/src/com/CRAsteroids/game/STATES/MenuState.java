@@ -33,7 +33,7 @@ public class MenuState extends GameState{
 	//variables
 	private SpriteBatch sb;
 	private ShapeRenderer sr;
-	private Viewport menuViewport;
+	public static Viewport menuViewport;
 	//Stage
 	private Stage stage;
 	//Font
@@ -180,7 +180,7 @@ public class MenuState extends GameState{
 		playButton.addListener(new InputListener(){
 		@Override
 		public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-			gsm.setState(GameStateManager.PLAY);
+			gsm.setState(GameStateManager.ChooseShipState);
 			return true;
 		}
 		

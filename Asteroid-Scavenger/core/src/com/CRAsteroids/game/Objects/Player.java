@@ -5,6 +5,7 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 import com.CRAsteroids.game.CRAsteroidsGame;
+import com.CRAsteroids.game.STATES.ChooseShipState;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.MathUtils;
@@ -49,8 +50,8 @@ public class Player extends SpaceObject{
 	private long requiredScore;
 	
 	//Ship types
-	public boolean fighterShip;
 	public boolean freighterShip;
+	public boolean fighterShip;
 	
 	public Player(ArrayList<Bullet> bullets){
 		
@@ -63,7 +64,8 @@ public class Player extends SpaceObject{
 		acceleration = 200;
 		deceleration = 10;
 		
-		freighterShip = true;
+		freighterShip = ChooseShipState.freighterShip;
+		fighterShip = ChooseShipState.fighterShip;
 		
 		if(fighterShip == true){
 			shapex = new float[4];
