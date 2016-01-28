@@ -101,13 +101,6 @@ public class CRAsteroidsGame implements ApplicationListener {
 		WIDTH = Gdx.graphics.getWidth();
 		HEIGHT = Gdx.graphics.getHeight();
 				
-		//create camera
-		cam = new OrthographicCamera(WIDTH, HEIGHT);
-		cam.position.set(WIDTH / 2, HEIGHT / 2, 0);
-		
-		//updates camera
-		cam.update();
-		
 		gsm.update(Gdx.graphics.getDeltaTime());
 		gsm.draw();
 		

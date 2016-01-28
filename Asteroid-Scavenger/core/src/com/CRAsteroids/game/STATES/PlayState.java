@@ -2,8 +2,6 @@ package com.CRAsteroids.game.STATES;
 
 import java.util.ArrayList;
 
-import sun.font.GlyphLayout;
-
 import com.CRAsteroids.game.CRAsteroidsGame;
 import com.CRAsteroids.game.GameKeys;
 import com.CRAsteroids.game.Save;
@@ -18,10 +16,15 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.Align;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public class PlayState extends GameState implements InputProcessor{
 	
@@ -30,10 +33,19 @@ public class PlayState extends GameState implements InputProcessor{
 	
 	private OrthographicCamera cam;
 	
+	private FitViewport playViewPort;
+	private Stage playerHud;
+	private LabelStyle scoreStyle;
+	private Label hudScore;
+	private Label lives;
+	private String playerScore;
+	private Table scoreTable;
+	private Table livesTable;
+	
 	private BitmapFont font;
 	private Player hudPlayer;
 	
-	private Player player;
+	public Player player;
 	private ArrayList<Bullet> bullets;
 	private ArrayList<Asteroid> asteroids;
 	private ArrayList<Bullet> enemyBullets;
@@ -53,10 +65,6 @@ public class PlayState extends GameState implements InputProcessor{
 	private float currentDelay;
 	private float bgTimer;
 	private boolean playLowPulse;
-	
-	private boolean leftPressed;
-	private boolean rightPressed;
-	private boolean upPressed;
 
 	protected PlayState(GameStateManager gsm) {
 		super(gsm);
@@ -68,17 +76,9 @@ public class PlayState extends GameState implements InputProcessor{
 		sb = new SpriteBatch();
 		sr = new ShapeRenderer();
 		
-		cam = new OrthographicCamera();
-		cam.position.set(0, 0, 0);
+		cam = new OrthographicCamera(CRAsteroidsGame.WIDTH, CRAsteroidsGame.HEIGHT);
+		cam.position.set(CRAsteroidsGame.WIDTH / 2, CRAsteroidsGame.HEIGHT / 2, 0);
 		cam.update();
-		
-//		FreeTypeFontGenerator gen = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Hyperspace bold.ttf"));
-//		FreeTypeFontParameter genPar = new FreeTypeFontParameter();
-//		
-//		genPar.size = 20;
-//		
-//		BitmapFont font = gen.generateFont(genPar);
-//		gen.dispose();
 		
 		font = CRAsteroidsGame.fontSmall;
 		
@@ -107,8 +107,51 @@ public class PlayState extends GameState implements InputProcessor{
 		currentDelay = maxDelay;
 		bgTimer = maxDelay;
 		playLowPulse = true;
+		
+		//*HUD stage
+		playViewPort = new FitViewport(CRAsteroidsGame.WIDTH, CRAsteroidsGame.HEIGHT);
+		playerHud = new Stage(playViewPort);
+		
+		scoreStyle = CRAsteroidsGame.smallStyle;
+		
+		hudScore = new Label("0", scoreStyle);
+		lives = new Label(" ", scoreStyle);
+		
+		//add actors
+		scoreTable = new Table();
+		livesTable = new Table();
+		
+		scoreTable.setFillParent(true);
+		livesTable.setFillParent(true);
+		
+		playerHud.addActor(scoreTable);
+		playerHud.addActor(livesTable);
+		
+		scoreTable.align(Align.top).padTop(Gdx.graphics.getHeight() * .025f);
+		scoreTable.add(hudScore).top();
+		
+		livesTable.align(Align.top).padTop(Gdx.graphics.getHeight() * .1f);
+		livesTable.add(lives);
+		
+		playerHud.setDebugAll(true);
+		scoreTable.setDebug(true);
+		livesTable.setDebug(true);
+		
+//				sb.setColor(1, 1, 1, 1);
+//				sb.begin();
+//				String playerScore = Long.toString(player.getScore());
+//				TextBounds playerScoreBounds = font.getBounds(playerScore);
+//				font.draw(
+//						sb, 
+//						playerScore, 
+//						player.getx() - playerScoreBounds.width / 2,
+//						player.gety() + 450);
 	}
 	
+	private void addActor(Player hudPlayer) {
+		
+	}
+
 	private void createParticles(float x, float y){
 		for(int i = 0; i < 6; i++){
 			particles.add(new Particle(x, y));
@@ -162,7 +205,8 @@ public class PlayState extends GameState implements InputProcessor{
 	public void update(float dt) {
 		handleInput();
 		
-		if(player != null)
+		cam = new OrthographicCamera(CRAsteroidsGame.WIDTH, CRAsteroidsGame.HEIGHT);
+		cam.position.set(player.getx(), player.gety(), 0);
 		cam.update();
 		
 		//next level
@@ -383,11 +427,15 @@ public class PlayState extends GameState implements InputProcessor{
 
 	@Override
 	public void draw() {
-		sb.setProjectionMatrix(CRAsteroidsGame.cam.combined);
-		sr.setProjectionMatrix(CRAsteroidsGame.cam.combined);
+		sb.setProjectionMatrix(cam.combined);
+		sr.setProjectionMatrix(cam.combined);
 		
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		
+		//draw stage
+		playerHud.act(Gdx.graphics.getDeltaTime());
+		playerHud.draw();
 		
 		//draw player
 		player.draw(sr);
@@ -417,36 +465,18 @@ public class PlayState extends GameState implements InputProcessor{
 			particles.get(i).draw(sr);
 		}
 		
-		//draw score
-		sb.setColor(1, 1, 1, 1);
-		sb.begin();
-		String playerScore = Long.toString(player.getScore());
-		TextBounds playerScoreBounds = font.getBounds(playerScore);
-		font.draw(
-				sb, 
-				playerScore, 
-				(Gdx.graphics.getWidth() / 2) - (playerScoreBounds.width / 2),
-				Gdx.graphics.getHeight() * .95f);
-		sb.end();
+		if(player!= null){
+		playerScore = Long.toString(player.getScore());
+		hudScore.setText(playerScore);
+		}
 		
 		//draw lives
 		for(int i = 0; i < player.getLives(); i++){
 			hudPlayer.setPosition(
-					(Gdx.graphics.getWidth() / 2 - (player.playerWidth + player.playerWidth / 2)) + (player.playerWidth + player.playerWidth / 2) * i, 
-					Gdx.graphics.getHeight() * .90f);
+					(player.getx() - (player.playerWidth + player.playerWidth / 2)) + (player.playerWidth + player.playerWidth / 2) * i, 
+					player.gety() + 400);
 			hudPlayer.draw(sr);
 		}
-	}
-
-	public void handleInput() {
-//		if(!player.isHit()) {
-//			player.setLeft(GameKeys.isDown(GameKeys.LEFT));
-//			player.setRight(GameKeys.isDown(GameKeys.RIGHT));
-//			player.setUp(GameKeys.isDown(GameKeys.UP));
-//			if(GameKeys.isPressed(GameKeys.SPACE)) {
-//				player.shoot();
-//			}
-//		}
 	}
 
 	public void dispose() {
@@ -555,6 +585,12 @@ public class PlayState extends GameState implements InputProcessor{
 	public boolean scrolled(int amount) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public void handleInput() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

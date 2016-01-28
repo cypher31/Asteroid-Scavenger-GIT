@@ -37,7 +37,7 @@ public class Bullet extends SpaceObject{
 		x += dx * dt;
 		y += dy * dt;
 		
-		wrap();
+//		wrap();
 		
 		lifeTimer += dt;
 		if(lifeTimer > lifeTime){

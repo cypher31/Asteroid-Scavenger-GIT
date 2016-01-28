@@ -50,8 +50,8 @@ public class Player extends SpaceObject{
 	private long requiredScore;
 	
 	//Ship types
-	public boolean freighterShip;
-	public boolean fighterShip;
+	public  boolean freighterShip;
+	public  boolean fighterShip;
 	
 	public Player(ArrayList<Bullet> bullets){
 		
@@ -64,17 +64,18 @@ public class Player extends SpaceObject{
 		acceleration = 200;
 		deceleration = 10;
 		
-		freighterShip = ChooseShipState.freighterShip;
 		fighterShip = ChooseShipState.fighterShip;
+		freighterShip = ChooseShipState.freighterShip;
 		
 		if(fighterShip == true){
 			shapex = new float[4];
 			shapey = new float[4];
 		}
 		if(freighterShip == true){
-			shapex = new float[10];
-			shapey = new float[10];
+			 shapex = new float[10];
+			 shapey = new float[10];
 		}
+		
 		flamex = new float[3];
 		flamey = new float[3];
 		
@@ -238,8 +239,6 @@ public class Player extends SpaceObject{
 //		Jukebox.play("shoot");
 		}
 		
-		System.out.println(getScore());
-		
 		if(bullets.size() == MAX_BULLETS && freighterShip == true) return;
 		if(freighterShip == true){
 		bullets.add(new Bullet(shapex[2], shapey[2], radians - 3.1415f / 2));
@@ -394,7 +393,7 @@ public class Player extends SpaceObject{
 		}
 		
 		//screen wrap
-		wrap();
+//		wrap();
 	}
 	
 	public void draw(ShapeRenderer sr){
@@ -418,8 +417,16 @@ public class Player extends SpaceObject{
 		}
 		
 		//draw ship
-		for(int i = 0, j = shapex.length - 1; i < shapex.length; j = i++){
-			sr.line(shapex[i], shapey[i], shapex[j], shapey[j]);
+		if(fighterShip == true){
+			for(int i = 0, j = shapex.length - 1; i < shapex.length; j = i++){
+				sr.line(shapex[i], shapey[i], shapex[j], shapey[j]);
+			}
+		}
+		
+		if(freighterShip == true){
+			for(int i = 0, j = shapex.length - 1; i < shapex.length; j = i++){
+				sr.line(shapex[i], shapey[i], shapex[j], shapey[j]);
+			}
 		}
 		
 		//draw flames

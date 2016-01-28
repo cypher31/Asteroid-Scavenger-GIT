@@ -63,11 +63,11 @@ public class SpaceObject {
 		return b;
 	}
 	
-	protected void wrap(){
-		if(x < 0) x = CRAsteroidsGame.WIDTH;
-		if(x > CRAsteroidsGame.WIDTH) x = 0;
-		if(y < 0) y = CRAsteroidsGame.HEIGHT;
-		if(y > CRAsteroidsGame.HEIGHT) y = 0;
-	}
+//	protected void wrap(){
+//		if(x < 0) x = CRAsteroidsGame.WIDTH;
+//		if(x > CRAsteroidsGame.WIDTH) x = 0;
+//		if(y < 0) y = CRAsteroidsGame.HEIGHT;
+//		if(y > CRAsteroidsGame.HEIGHT) y = 0;
+//	}
 
 }

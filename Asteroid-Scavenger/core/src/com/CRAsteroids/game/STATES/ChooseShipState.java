@@ -1,6 +1,7 @@
 package com.CRAsteroids.game.STATES;
 
 import com.CRAsteroids.game.CRAsteroidsGame;
+import com.CRAsteroids.game.Objects.Player;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -14,7 +15,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -36,16 +36,21 @@ public class ChooseShipState extends GameState{
 	
 	public static boolean fighterShip;
 	public static boolean freighterShip;
-
+	
+	public Player fighterHud;
+	public Player freighterHud;
+	
 	protected ChooseShipState(GameStateManager gsm) {
 		super(gsm);
 	}
-
 	
 	public void init() {
 		
 		sb = new SpriteBatch();
 		sr = new ShapeRenderer();
+		
+		fighterHud = new Player(null);
+		freighterHud = new Player(null);
 		
 		currentScreenWidth = Gdx.graphics.getWidth();
 		currentScreenHeight = Gdx.graphics.getHeight();
@@ -93,6 +98,13 @@ public class ChooseShipState extends GameState{
 		
 		stage.act(Gdx.graphics.getDeltaTime());
 		stage.draw();
+
+//		fighterHud.setPosition(Gdx.graphics.getWidth() / 2 - 100 - fighterButton.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+//		fighterHud.draw(sr);
+//	
+//		freighterHud.setPosition(Gdx.graphics.getWidth() / 2 + 100 + fighterButton.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+//		freighterHud.draw(sr);
+		
 	}
 
 	@Override
@@ -104,6 +116,7 @@ public class ChooseShipState extends GameState{
 			System.out.println("fighter chosen");
 			gsm.setState(GameStateManager.PLAY);
 			fighterShip = true;
+			freighterShip = false;
 		}
 		});
 		
@@ -114,6 +127,7 @@ public class ChooseShipState extends GameState{
 			System.out.println("fighter chosen");
 			gsm.setState(GameStateManager.PLAY);
 			fighterShip = true;
+			freighterShip = false;
 			return true;
 		}
 		
@@ -126,6 +140,7 @@ public class ChooseShipState extends GameState{
 				System.out.println("freighter chosen");
 				gsm.setState(GameStateManager.PLAY);
 				freighterShip = true;
+				fighterShip = false;
 			}
 			});
 		
@@ -136,6 +151,7 @@ public class ChooseShipState extends GameState{
 			System.out.println("freighter chosen");
 			gsm.setState(GameStateManager.PLAY);
 			freighterShip = true;
+			fighterShip = false;
 			return true;
 		}
 		});
@@ -143,7 +159,9 @@ public class ChooseShipState extends GameState{
 
 	@Override
 	public void dispose() {
-		
+		sr.dispose();
+		sb.dispose();
+		stage.dispose();
 	}
 
 	@Override
@@ -151,5 +169,4 @@ public class ChooseShipState extends GameState{
 		stage.getViewport().update(width, height, true);
 
 	}
-
 }

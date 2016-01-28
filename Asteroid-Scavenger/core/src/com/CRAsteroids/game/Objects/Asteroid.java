@@ -89,7 +89,7 @@ public class Asteroid extends SpaceObject{
 		radians += rotationSpeed * dt;
 		setShape();
 		
-		wrap();
+//		wrap();
 	}
 	
 	public void draw(ShapeRenderer sr){
