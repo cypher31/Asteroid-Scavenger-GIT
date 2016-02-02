@@ -19,12 +19,14 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class PlayState extends GameState implements InputProcessor{
 	
@@ -32,6 +34,9 @@ public class PlayState extends GameState implements InputProcessor{
 	private ShapeRenderer sr;
 	
 	private OrthographicCamera cam;
+	private Vector3 screenCoords;
+	public static String Quad;
+	public static int quadInterval = 5000;
 	
 	private FitViewport playViewPort;
 	private Stage playerHud;
@@ -115,7 +120,7 @@ public class PlayState extends GameState implements InputProcessor{
 		scoreStyle = CRAsteroidsGame.smallStyle;
 		
 		hudScore = new Label("0", scoreStyle);
-		lives = new Label(" ", scoreStyle);
+		lives = new Label("Extra Lives: " + player.getLives(), scoreStyle);
 		
 		//add actors
 		scoreTable = new Table();
@@ -130,7 +135,7 @@ public class PlayState extends GameState implements InputProcessor{
 		scoreTable.align(Align.top).padTop(Gdx.graphics.getHeight() * .025f);
 		scoreTable.add(hudScore).top();
 		
-		livesTable.align(Align.top).padTop(Gdx.graphics.getHeight() * .1f);
+		livesTable.align(Align.top).padTop(Gdx.graphics.getHeight() * .05f);
 		livesTable.add(lives);
 		
 		playerHud.setDebugAll(true);
@@ -204,6 +209,8 @@ public class PlayState extends GameState implements InputProcessor{
 	@Override
 	public void update(float dt) {
 		handleInput();
+		
+		Quadrants();
 		
 		cam = new OrthographicCamera(CRAsteroidsGame.WIDTH, CRAsteroidsGame.HEIGHT);
 		cam.position.set(player.getx(), player.gety(), 0);
@@ -470,12 +477,32 @@ public class PlayState extends GameState implements InputProcessor{
 		hudScore.setText(playerScore);
 		}
 		
-		//draw lives
-		for(int i = 0; i < player.getLives(); i++){
-			hudPlayer.setPosition(
-					(player.getx() - (player.playerWidth + player.playerWidth / 2)) + (player.playerWidth + player.playerWidth / 2) * i, 
-					player.gety() + 400);
-			hudPlayer.draw(sr);
+//		//draw lives
+//		for(int i = 0; i < player.getLives(); i++){
+//			hudPlayer.setPosition(
+//					(player.getx() - (player.playerWidth + player.playerWidth / 2)) + (player.playerWidth + player.playerWidth / 2) * i, 
+//					player.gety() + 400);
+//			hudPlayer.draw(sr);
+//		}
+	}
+	
+	public void Quadrants(){
+		if(player.getx() < 5000 && player.gety() < 5000){
+			Quad = "1";
+		}else if(player.getx() > quadInterval * 1 && player.gety() < quadInterval * 1){
+			Quad = "2";
+		}else if(player.getx() > quadInterval * 1 && player.gety() > quadInterval * 1 && player.gety() < quadInterval * 2){
+			Quad = "3";
+		}else if(player.getx() < quadInterval * 1 && player.gety() > quadInterval * 1 && player.gety() < quadInterval * 2){
+			Quad = "4";
+		}else if(player.getx() < quadInterval * 1 && player.gety() > quadInterval * 2 && player.gety() < quadInterval * 3){
+			Quad = "5";
+		}else if(player.getx() > quadInterval * 1 && player.gety() > quadInterval * 2 && player.gety() < quadInterval * 3){
+			Quad = "6";
+		}else if(player.getx() > quadInterval * 1 && player.gety() > quadInterval * 3 && player.gety() < quadInterval * 4){
+			Quad = "7";
+		}else if(player.getx() < quadInterval * 1 && player.gety() > quadInterval * 3 && player.gety() < quadInterval * 4){
+			Quad = "8";
 		}
 	}
 
@@ -519,7 +546,7 @@ public class PlayState extends GameState implements InputProcessor{
 			player.shoot();
 		}
 		if(k == Keys.SHIFT_LEFT || k == Keys.SHIFT_RIGHT) {
-			GameKeys.setKey(GameKeys.SHIFT, true);
+			player.hyperDrive = true;
 		}
 		return true;
 	}
@@ -546,7 +573,7 @@ public class PlayState extends GameState implements InputProcessor{
 		if(k == Keys.SPACE) {
 		}
 		if(k == Keys.SHIFT_LEFT || k == Keys.SHIFT_RIGHT) {
-			GameKeys.setKey(GameKeys.SHIFT, false);
+			player.hyperDrive = false;
 		}
 		return true;
 	}

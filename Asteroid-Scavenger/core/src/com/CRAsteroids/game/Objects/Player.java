@@ -6,14 +6,18 @@ import java.util.ArrayList;
 
 import com.CRAsteroids.game.CRAsteroidsGame;
 import com.CRAsteroids.game.STATES.ChooseShipState;
+import com.CRAsteroids.game.STATES.PlayState;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.TimeUtils;
 
 public class Player extends SpaceObject{
 	
 	private final int MAX_BULLETS = 4;
 	private ArrayList<Bullet> bullets;
+	
+	private long startTime;
 	
 	private float[] flamex;
 	private float[] flamey;
@@ -39,6 +43,7 @@ public class Player extends SpaceObject{
 	
 	private boolean hit;
 	private boolean dead;
+	public boolean hyperDrive = false;
 	
 	private float hitTimer;
 	private float hitTime;
@@ -54,6 +59,8 @@ public class Player extends SpaceObject{
 	public  boolean fighterShip;
 	
 	public Player(ArrayList<Bullet> bullets){
+		
+		startTime = TimeUtils.nanoTime();
 		
 		this.bullets = bullets;
 		
@@ -326,6 +333,7 @@ public class Player extends SpaceObject{
 //		}
 		
 		//check if hit
+		
 		if(hit){
 			hitTimer += dt;
 			if(hitTimer > hitTime){
@@ -358,16 +366,21 @@ public class Player extends SpaceObject{
 		}
 		
 		//accelerating
-		if(up){
+		if(up == true && hyperDrive == true){
+			dx += MathUtils.cos(radians) * acceleration * 100 * dt;
+			dy += MathUtils.sin(radians) * acceleration * 100 * dt;
+			acceleratingTimer += dt;
+			if(acceleratingTimer > .3f){
+				acceleratingTimer = 0;
+			}
+		}else if(up == true && hyperDrive == false){
 			dx += MathUtils.cos(radians) * acceleration * dt;
 			dy += MathUtils.sin(radians) * acceleration * dt;
 			acceleratingTimer += dt;
 			if(acceleratingTimer > .1f){
 				acceleratingTimer = 0;
-			}
-		}else{
-			acceleratingTimer = 0;
 		}
+	}
 		
 		//decelerating
 		float vec = (float)Math.sqrt(dx * dx + dy * dy);
@@ -384,6 +397,12 @@ public class Player extends SpaceObject{
 		x += dx * dt;
 		y += dy * dt;
 		
+		if (TimeUtils.timeSinceNanos(startTime) > 2000000000) {
+			playerLocation();
+			startTime = TimeUtils.nanoTime();
+			}
+		
+		
 		//setShape
 		setShape();
 		
@@ -394,6 +413,38 @@ public class Player extends SpaceObject{
 		
 		//screen wrap
 //		wrap();
+	}
+	
+	private void playerLocation(){
+		float getx = MathUtils.round(getx());
+		float gety = MathUtils.round(gety());
+		
+		if(PlayState.Quad == "1"){
+			getx = getx;
+			gety = gety;
+		}else if(PlayState.Quad == "2"){
+			getx = getx - PlayState.quadInterval;
+			gety = gety;
+		}else if(PlayState.Quad == "3"){
+			getx = getx - PlayState.quadInterval;
+			gety = gety - PlayState.quadInterval;
+		}else if(PlayState.Quad == "4"){
+			getx = getx;
+			gety = gety - PlayState.quadInterval;
+		}else if(PlayState.Quad == "5"){
+			getx = getx;
+			gety = gety - (PlayState.quadInterval * 2);
+		}else if(PlayState.Quad == "6"){
+			getx = getx - PlayState.quadInterval;
+			gety = gety - (PlayState.quadInterval * 2);
+		}else if(PlayState.Quad == "7"){
+			getx = getx - PlayState.quadInterval;
+			gety = gety - (PlayState.quadInterval * 3);
+		}else if(PlayState.Quad == "8"){
+			getx = getx;
+			gety = gety - (PlayState.quadInterval * 3);
+		}
+		System.out.println("Sector(" + PlayState.Quad + ")" + getx +  ", " + gety);
 	}
 	
 	public void draw(ShapeRenderer sr){
