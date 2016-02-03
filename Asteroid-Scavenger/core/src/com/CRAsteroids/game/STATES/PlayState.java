@@ -44,9 +44,12 @@ public class PlayState extends GameState implements InputProcessor{
 	private LabelStyle scoreStyle;
 	private Label hudScore;
 	private Label lives;
+	private Label creditsHud;
 	private String playerScore;
+	private String playerCredits;
 	private Table scoreTable;
 	private Table livesTable;
+	private Table creditsTable;
 	
 	private BitmapFont font;
 	private Player hudPlayer;
@@ -129,22 +132,29 @@ public class PlayState extends GameState implements InputProcessor{
 		
 		hudScore = new Label("0", scoreStyle);
 		lives = new Label("Extra Lives: " + player.getLives(), scoreStyle);
+		creditsHud = new Label("Credits: " + player.getPlayerCredit(), scoreStyle);
 		
 		//add actors
 		scoreTable = new Table();
 		livesTable = new Table();
+		creditsTable = new Table();
 		
 		scoreTable.setFillParent(true);
 		livesTable.setFillParent(true);
+		creditsTable.setFillParent(true);
 		
 		playerHud.addActor(scoreTable);
 		playerHud.addActor(livesTable);
+		playerHud.addActor(creditsTable);
 		
 		scoreTable.align(Align.top).padTop(Gdx.graphics.getHeight() * .025f);
 		scoreTable.add(hudScore).top();
 		
 		livesTable.align(Align.top).padTop(Gdx.graphics.getHeight() * .05f);
 		livesTable.add(lives);
+		
+		creditsTable.align(Align.top).padTop(Gdx.graphics.getHeight() * .025f).padLeft(75);
+		creditsTable.add(creditsHud);
 		
 		playerHud.setDebugAll(true);
 		scoreTable.setDebug(true);
@@ -522,6 +532,8 @@ public class PlayState extends GameState implements InputProcessor{
 		if(player!= null){
 		playerScore = Long.toString(player.getScore());
 		hudScore.setText(playerScore);
+		playerCredits = Long.toString(player.getPlayerCredit());
+		creditsHud.setText(playerCredits);
 		}
 		
 //		//draw lives
