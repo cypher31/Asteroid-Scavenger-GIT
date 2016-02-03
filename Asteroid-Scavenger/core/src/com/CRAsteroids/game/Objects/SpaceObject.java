@@ -1,6 +1,5 @@
 package com.CRAsteroids.game.Objects;
 
-import com.CRAsteroids.game.CRAsteroidsGame;
 
 public class SpaceObject {
 	

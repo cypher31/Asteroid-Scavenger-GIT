@@ -7,6 +7,7 @@ import com.CRAsteroids.game.GameKeys;
 import com.CRAsteroids.game.Save;
 import com.CRAsteroids.game.Objects.Asteroid;
 import com.CRAsteroids.game.Objects.Bullet;
+import com.CRAsteroids.game.Objects.Credits;
 import com.CRAsteroids.game.Objects.FlyingSaucer;
 import com.CRAsteroids.game.Objects.Particle;
 import com.CRAsteroids.game.Objects.Player;
@@ -19,6 +20,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -26,7 +28,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class PlayState extends GameState implements InputProcessor{
 	
@@ -54,6 +55,7 @@ public class PlayState extends GameState implements InputProcessor{
 	private ArrayList<Bullet> bullets;
 	private ArrayList<Asteroid> asteroids;
 	private ArrayList<Bullet> enemyBullets;
+	private ArrayList<Credits> credits;
 	
 	private FlyingSaucer flyingSaucer;
 	private float fsTimer;
@@ -64,6 +66,8 @@ public class PlayState extends GameState implements InputProcessor{
 	private int level;
 	private int totalAsteroids;
 	private int numAsteroidsLeft;
+	
+	private Vector2 lastTouch = new Vector2();
 	
 	private float maxDelay;
 	private float minDelay;
@@ -94,6 +98,10 @@ public class PlayState extends GameState implements InputProcessor{
 		asteroids = new ArrayList<Asteroid>();
 		
 		particles = new ArrayList<Particle>();
+		
+		credits = new ArrayList<Credits>();
+		
+		credits.add(new Credits(500, 500));
 		
 		level = 1;
 		spawnAsteroids();
@@ -153,9 +161,6 @@ public class PlayState extends GameState implements InputProcessor{
 //						player.gety() + 450);
 	}
 	
-	private void addActor(Player hudPlayer) {
-		
-	}
 
 	private void createParticles(float x, float y){
 		for(int i = 0; i < 6; i++){
@@ -222,6 +227,11 @@ public class PlayState extends GameState implements InputProcessor{
 			spawnAsteroids();
 		}
 		
+		
+		//update credits
+		for(int i = 0; i < credits.size(); i++)
+		credits.get(i).update(dt);
+		
 		//update player
 		player.update(dt);
 		if(player.isDead()){
@@ -238,6 +248,7 @@ public class PlayState extends GameState implements InputProcessor{
 //			Jukebox.stop("largesaucer");
 			return;
 		}
+		
 		//update player bullets
 		for(int i = 0; i < bullets.size(); i++){
 			bullets.get(i).update(dt);
@@ -246,6 +257,7 @@ public class PlayState extends GameState implements InputProcessor{
 				i--;
 			}
 		}
+		
 		//update flying saucer
 		if(flyingSaucer == null){
 			fsTimer += dt;
@@ -444,8 +456,13 @@ public class PlayState extends GameState implements InputProcessor{
 		playerHud.act(Gdx.graphics.getDeltaTime());
 		playerHud.draw();
 		
+		//draw credits
+		for(int i = 0; i < credits.size(); i++)
+		credits.get(i).draw(sr);
+		
 		//draw player
 		player.draw(sr);
+
 		
 		//draw bullets
 		for(int i = 0; i < bullets.size(); i++){
@@ -472,6 +489,7 @@ public class PlayState extends GameState implements InputProcessor{
 			particles.get(i).draw(sr);
 		}
 		
+		//draw hud
 		if(player!= null){
 		playerScore = Long.toString(player.getScore());
 		hudScore.setText(playerScore);
@@ -586,20 +604,48 @@ public class PlayState extends GameState implements InputProcessor{
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		// TODO Auto-generated method stub
-		return false;
+		
+		lastTouch.set(screenX, screenY);
+		
+		if(Gdx.input.isTouched(0)){
+			player.setUp(true);
+		}
+		
+		if(Gdx.input.isTouched(1)){
+			player.shoot();
+		}
+		return true;
 	}
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		// TODO Auto-generated method stub
-		return false;
+		
+		player.setUp(false);
+		player.setLeft(false);
+		player.setRight(false);
+		return true;
 	}
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		// TODO Auto-generated method stub
-		return false;
+		
+		Vector2 newTouch = new Vector2(screenX, screenY);
+		// delta will now hold the difference between the last and the current touch positions
+	    // delta.x > 0 means the touch moved to the right, delta.x < 0 means a move to the left
+	    Vector2 delta = newTouch.cpy().sub(lastTouch);
+	    lastTouch = newTouch;
+	    
+	    if(delta.x > 0){
+	    	player.setRight(true);
+	    	player.setLeft(false);
+	    } 
+	    
+	    if(delta.x < 0){
+	    	player.setLeft(true);
+	    	player.setRight(false);
+	    }
+	    
+	    return true;
 	}
 
 	@Override

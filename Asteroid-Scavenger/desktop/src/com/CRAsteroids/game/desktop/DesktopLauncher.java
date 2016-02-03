@@ -8,7 +8,6 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.title = "Asteroid Scavenger v0.1.0";
-		//cfg.useGL30 = true;
 		cfg.height = 1000;
 		cfg.width = 1000;
 		cfg.resizable = false;

@@ -327,13 +327,6 @@ public class Player extends SpaceObject{
 	}
 	
 	public void update(float dt){
-		
-//		for(int i = 0; i < shapex.length; i++){
-//			System.out.printf("%s, %s\n", shapex[i], shapey[i]);
-//		}
-		
-		//check if hit
-		
 		if(hit){
 			hitTimer += dt;
 			if(hitTimer > hitTime){
