@@ -51,6 +51,7 @@ public class Player extends SpaceObject{
 	private Point2D.Float[] hitLinesVector;
 	
 	public long score;
+	public long playerCredit;
 	private int extraLives;
 	private long requiredScore;
 	
@@ -113,6 +114,7 @@ public class Player extends SpaceObject{
 		hitTime = 2;
 		
 		score = 0;
+		playerCredit = 0;
 		extraLives = 3;
 		requiredScore = 10000;
 	}
@@ -227,6 +229,10 @@ public class Player extends SpaceObject{
 		return score;
 	}
 	
+	public long getPlayerCredit(){
+		return playerCredit;
+	}
+	
 	public int getLives(){
 		return extraLives;
 	}
@@ -237,6 +243,10 @@ public class Player extends SpaceObject{
 	
 	public void incrementScore(long l){
 		score += l;
+	}
+	
+	public void incrementCredits(long l){
+		playerCredit += l;
 	}
 	
 	public void shoot(){

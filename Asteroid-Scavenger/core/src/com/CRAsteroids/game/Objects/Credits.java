@@ -9,16 +9,23 @@ public class Credits extends SpaceObject{
 	private float acceleration = 2.0f;
 	
 	public long score;
+	private long creditWorth;
 	
 	public Credits(float x, float y){
 		
 		this.x = x;
 		this.y = y;
 		
+		speed = MathUtils.random(25, 75);
+		
 		shapex = new float[4];
 		shapey = new float[4];
 	
-		radians = 3.1415f / 2;
+		radians = MathUtils.random(2 * 3.1415f);
+		dx = MathUtils.cos(radians) * speed;
+		dy = MathUtils.sin(radians) * speed;
+		
+		creditWorth = MathUtils.random(50, 150);
 		
 	}
 	
@@ -42,14 +49,14 @@ public class Credits extends SpaceObject{
 		setShape();
 	}
 	
-	public long getScore(){
-		return score;
+	public long creditWorth(){
+		return creditWorth;
 	}
 	
 	public void update(float dt){
 		
-		dx += MathUtils.cos(MathUtils.random()) * acceleration * dt;
-		dy += MathUtils.sin(MathUtils.random()) * acceleration * dt;
+		dx = MathUtils.cos(radians) * speed;
+		dy = MathUtils.sin(radians) * speed;
 		
 		//set position
 		x += dx * dt;

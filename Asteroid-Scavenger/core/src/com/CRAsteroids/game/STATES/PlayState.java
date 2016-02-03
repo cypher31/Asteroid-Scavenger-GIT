@@ -210,7 +210,7 @@ public class PlayState extends GameState implements InputProcessor{
 			asteroids.add(new Asteroid(x, y, Asteroid.LARGE));
 		}
 	}
-
+	
 	@Override
 	public void update(float dt) {
 		handleInput();
@@ -354,11 +354,39 @@ public class PlayState extends GameState implements InputProcessor{
 					asteroids.remove(j);
 					j--;
 					splitAsteroid(a);
-					credits.add(new Credits(a.getx(), a.gety()));
 					player.incrementScore(a.getScore());
 	//				Jukebox.play("explode");
+					if(a.getType() == 2){
+						System.out.println(a.getType());
+						credits.add(new Credits(a.getx(), a.gety()));
+					}
+					if(a.getType() == 1){
+						System.out.println(a.getType());
+						credits.add(new Credits(a.getx(), a.gety()));
+						credits.add(new Credits(a.getx(), a.gety()));
+					}
+					if(a.getType() == 0){
+						System.out.println(a.getType());
+						credits.add(new Credits(a.getx(), a.gety()));
+						credits.add(new Credits(a.getx(), a.gety()));
+						credits.add(new Credits(a.getx(), a.gety()));
+					}
 					break;
 				}
+			}
+		}
+		
+		//player-credit collision
+		if(!player.isHit()){
+			for(int i = 0; i < credits.size(); i ++){
+				Credits c = credits.get(i);
+				if(c.intersects(player)){
+					credits.remove(i);
+					i--;
+					player.incrementCredits(c.creditWorth());
+					System.out.println(player.getPlayerCredit());
+				}
+				
 			}
 		}
 		
