@@ -354,6 +354,7 @@ public class PlayState extends GameState implements InputProcessor{
 					asteroids.remove(j);
 					j--;
 					splitAsteroid(a);
+					credits.add(new Credits(a.getx(), a.gety()));
 					player.incrementScore(a.getScore());
 	//				Jukebox.play("explode");
 					break;
