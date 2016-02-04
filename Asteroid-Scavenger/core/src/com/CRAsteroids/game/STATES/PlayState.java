@@ -47,6 +47,7 @@ public class PlayState extends GameState implements InputProcessor{
 	private Label creditsHud;
 	private String playerScore;
 	private String playerCredits;
+	private String playerLives;
 	private Table scoreTable;
 	private Table livesTable;
 	private Table creditsTable;
@@ -104,8 +105,6 @@ public class PlayState extends GameState implements InputProcessor{
 		
 		credits = new ArrayList<Credits>();
 		
-		credits.add(new Credits(500, 500));
-		
 		level = 1;
 		spawnAsteroids();
 		
@@ -130,7 +129,7 @@ public class PlayState extends GameState implements InputProcessor{
 		
 		scoreStyle = CRAsteroidsGame.smallStyle;
 		
-		hudScore = new Label("0", scoreStyle);
+		hudScore = new Label("Score: 0", scoreStyle);
 		lives = new Label("Extra Lives: " + player.getLives(), scoreStyle);
 		creditsHud = new Label("Credits: " + player.getPlayerCredit(), scoreStyle);
 		
@@ -147,14 +146,10 @@ public class PlayState extends GameState implements InputProcessor{
 		playerHud.addActor(livesTable);
 		playerHud.addActor(creditsTable);
 		
-		scoreTable.align(Align.top).padTop(Gdx.graphics.getHeight() * .025f);
-		scoreTable.add(hudScore).top();
-		
-		livesTable.align(Align.top).padTop(Gdx.graphics.getHeight() * .05f);
-		livesTable.add(lives);
-		
-		creditsTable.align(Align.top).padTop(Gdx.graphics.getHeight() * .025f).padLeft(75);
-		creditsTable.add(creditsHud);
+		scoreTable.align(Align.top);
+		scoreTable.add(hudScore).padTop(Gdx.graphics.getHeight() * .025f).row();
+		scoreTable.add(creditsHud).row();
+		scoreTable.add(lives);
 		
 		playerHud.setDebugAll(true);
 		scoreTable.setDebug(true);
@@ -531,9 +526,11 @@ public class PlayState extends GameState implements InputProcessor{
 		//draw hud
 		if(player!= null){
 		playerScore = Long.toString(player.getScore());
-		hudScore.setText(playerScore);
+		hudScore.setText("Score: " + playerScore);
 		playerCredits = Long.toString(player.getPlayerCredit());
-		creditsHud.setText(playerCredits);
+		creditsHud.setText("Credits: " + playerCredits);
+		playerLives = Long.toString(player.getLives());
+		lives.setText("Extra Lives: " + playerLives);
 		}
 		
 //		//draw lives
