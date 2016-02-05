@@ -27,12 +27,17 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public class PlayState extends GameState implements InputProcessor{
 	
 	private SpriteBatch sb;
 	private ShapeRenderer sr;
+	
+	private long startTime;
+	
+	public static boolean isFlashing;
 	
 	private OrthographicCamera cam;
 	private Vector3 screenCoords;
@@ -339,6 +344,9 @@ public class PlayState extends GameState implements InputProcessor{
 		//check collisions
 		checkCollisions();
 		
+		//hyperDrive
+		hyperDrive();
+		
 //		//play bg music
 //		bgTimer += dt;
 //		if(!player.isHit() && bgTimer >= currentDelay){
@@ -497,6 +505,7 @@ public class PlayState extends GameState implements InputProcessor{
 				}
 			}
 		}
+		
 	}
 
 	@Override
@@ -605,6 +614,14 @@ public class PlayState extends GameState implements InputProcessor{
 		// TODO Auto-generated method stub
 		
 	}
+	
+	public void hyperDrive(){
+		if(Gdx.input.isKeyPressed(Keys.SHIFT_LEFT) && TimeUtils.timeSinceNanos(startTime) > 3000000000L){
+			player.hyperDrive = true;
+			startTime = TimeUtils.nanoTime();
+			isFlashing = false;
+		}
+	}
 
 
 	public boolean keyDown(int k) {
@@ -634,7 +651,8 @@ public class PlayState extends GameState implements InputProcessor{
 			player.shoot();
 		}
 		if(k == Keys.SHIFT_LEFT || k == Keys.SHIFT_RIGHT) {
-			player.hyperDrive = true;
+			startTime = TimeUtils.nanoTime();
+			isFlashing = true;
 		}
 		return true;
 	}
@@ -662,6 +680,7 @@ public class PlayState extends GameState implements InputProcessor{
 		}
 		if(k == Keys.SHIFT_LEFT || k == Keys.SHIFT_RIGHT) {
 			player.hyperDrive = false;
+			isFlashing = false;
 		}
 		return true;
 	}

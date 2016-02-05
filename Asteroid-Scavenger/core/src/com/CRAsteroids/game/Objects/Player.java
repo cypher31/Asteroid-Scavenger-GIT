@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import com.CRAsteroids.game.CRAsteroidsGame;
 import com.CRAsteroids.game.STATES.ChooseShipState;
 import com.CRAsteroids.game.STATES.PlayState;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.MathUtils;
@@ -410,7 +411,7 @@ public class Player extends SpaceObject{
 		if (TimeUtils.timeSinceNanos(startTime) > 2000000000) {
 			playerLocation();
 			startTime = TimeUtils.nanoTime();
-			}
+		}
 		
 		
 		//setShape
@@ -454,12 +455,15 @@ public class Player extends SpaceObject{
 			getx = getx;
 			gety = gety - (PlayState.quadInterval * 3);
 		}
-		System.out.println("Sector(" + PlayState.Quad + ")" + getx +  ", " + gety);
 	}
 	
 	public void draw(ShapeRenderer sr){
 		
-		sr.setColor(1, 1, 1, 1);
+		if(PlayState.isFlashing == true){
+			sr.setColor(Color.PURPLE);
+		}else{
+			sr.setColor(Color.WHITE);
+		}
 		
 		sr.begin(ShapeType.Line);
 		
