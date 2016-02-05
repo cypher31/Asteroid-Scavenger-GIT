@@ -3,6 +3,7 @@ package com.CRAsteroids.game.Objects;
 import java.util.ArrayList;
 
 import com.CRAsteroids.game.CRAsteroidsGame;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.MathUtils;

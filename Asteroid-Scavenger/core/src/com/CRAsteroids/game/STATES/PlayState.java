@@ -4,13 +4,13 @@ import java.util.ArrayList;
 
 import com.CRAsteroids.game.CRAsteroidsGame;
 import com.CRAsteroids.game.GameKeys;
-import com.CRAsteroids.game.Save;
 import com.CRAsteroids.game.Objects.Asteroid;
 import com.CRAsteroids.game.Objects.Bullet;
 import com.CRAsteroids.game.Objects.Credits;
 import com.CRAsteroids.game.Objects.FlyingSaucer;
 import com.CRAsteroids.game.Objects.Particle;
 import com.CRAsteroids.game.Objects.Player;
+import com.CRAsteroids.game.Objects.Stars;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
@@ -39,18 +39,23 @@ public class PlayState extends GameState implements InputProcessor{
 	public static String Quad;
 	public static int quadInterval = 5000;
 	
+	//Hud
 	private FitViewport playViewPort;
 	private Stage playerHud;
 	private LabelStyle scoreStyle;
 	private Label hudScore;
 	private Label lives;
 	private Label creditsHud;
+	private Label location;
 	private String playerScore;
 	private String playerCredits;
 	private String playerLives;
+	private String playerLocationX;
+	private String playerLocationY;
 	private Table scoreTable;
 	private Table livesTable;
 	private Table creditsTable;
+	private Table locationTable;
 	
 	private BitmapFont font;
 	private Player hudPlayer;
@@ -60,6 +65,7 @@ public class PlayState extends GameState implements InputProcessor{
 	private ArrayList<Asteroid> asteroids;
 	private ArrayList<Bullet> enemyBullets;
 	private ArrayList<Credits> credits;
+	private ArrayList<Stars> stars;
 	
 	private FlyingSaucer flyingSaucer;
 	private float fsTimer;
@@ -105,6 +111,10 @@ public class PlayState extends GameState implements InputProcessor{
 		
 		credits = new ArrayList<Credits>();
 		
+		stars = new ArrayList<Stars>();
+		
+		createStars();
+		
 		level = 1;
 		spawnAsteroids();
 		
@@ -132,28 +142,36 @@ public class PlayState extends GameState implements InputProcessor{
 		hudScore = new Label("Score: 0", scoreStyle);
 		lives = new Label("Extra Lives: " + player.getLives(), scoreStyle);
 		creditsHud = new Label("Credits: " + player.getPlayerCredit(), scoreStyle);
+		location = new Label("Location: " + "Sector(" + Quad + ")" + player.getx +  " , " + player.gety, scoreStyle);
 		
 		//add actors
 		scoreTable = new Table();
 		livesTable = new Table();
 		creditsTable = new Table();
+		locationTable = new Table();
 		
 		scoreTable.setFillParent(true);
 		livesTable.setFillParent(true);
 		creditsTable.setFillParent(true);
+		locationTable.setFillParent(true);
 		
 		playerHud.addActor(scoreTable);
 		playerHud.addActor(livesTable);
 		playerHud.addActor(creditsTable);
+		playerHud.addActor(locationTable);
 		
 		scoreTable.align(Align.top);
 		scoreTable.add(hudScore).padTop(Gdx.graphics.getHeight() * .025f).row();
 		scoreTable.add(creditsHud).row();
 		scoreTable.add(lives);
 		
+		locationTable.align(Align.bottom).align(Align.right);
+		locationTable.add(location).padRight(Gdx.graphics.getWidth() * .025f);
+		
 		playerHud.setDebugAll(true);
 		scoreTable.setDebug(true);
 		livesTable.setDebug(true);
+		locationTable.setDebug(true);
 		
 //				sb.setColor(1, 1, 1, 1);
 //				sb.begin();
@@ -237,12 +255,15 @@ public class PlayState extends GameState implements InputProcessor{
 		for(int i = 0; i < credits.size(); i++)
 		credits.get(i).update(dt);
 		
+		//update stars
+		for(int i = 0; i < stars.size(); i++)
+		stars.get(i).update(dt);
+		
 		//update player
 		player.update(dt);
 		if(player.isDead()){
 			if(player.getLives() == 0) {
 //				Jukebox.stopAll();
-				Save.gd.setTentativeScore(player.getScore());
 				gsm.setState(GameStateManager.GAMEOVER);
 				return;
 			}
@@ -494,6 +515,14 @@ public class PlayState extends GameState implements InputProcessor{
 		for(int i = 0; i < credits.size(); i++)
 		credits.get(i).draw(sr);
 		
+		//draw stars
+		for(int i = 0; i < stars.size(); i++){
+			if(cam.frustum.pointInFrustum(stars.get(i).getx(), stars.get(i).gety(), 0)){
+				stars.get(i).draw(sr);
+			}
+		}
+		
+		
 		//draw player
 		player.draw(sr);
 
@@ -531,15 +560,10 @@ public class PlayState extends GameState implements InputProcessor{
 		creditsHud.setText("Credits: " + playerCredits);
 		playerLives = Long.toString(player.getLives());
 		lives.setText("Extra Lives: " + playerLives);
+		playerLocationX = Integer.toString(player.getx);
+		playerLocationY = Integer.toString(player.gety);
+		location.setText("Location: " + "Sector(" + Quad + ")" + playerLocationX +  " , " + playerLocationY);
 		}
-		
-//		//draw lives
-//		for(int i = 0; i < player.getLives(); i++){
-//			hudPlayer.setPosition(
-//					(player.getx() - (player.playerWidth + player.playerWidth / 2)) + (player.playerWidth + player.playerWidth / 2) * i, 
-//					player.gety() + 400);
-//			hudPlayer.draw(sr);
-//		}
 	}
 	
 	public void Quadrants(){
@@ -559,6 +583,14 @@ public class PlayState extends GameState implements InputProcessor{
 			Quad = "7";
 		}else if(player.getx() < quadInterval * 1 && player.gety() > quadInterval * 3 && player.gety() < quadInterval * 4){
 			Quad = "8";
+		}
+	}
+	
+	private void createStars(){
+		int numberOfStars = 10000;
+		
+		for(int i = 0; i < numberOfStars; i++){
+			stars.add(new Stars(MathUtils.random(0, 10000), MathUtils.random(0, 40000)));
 		}
 	}
 
@@ -703,5 +735,6 @@ public class PlayState extends GameState implements InputProcessor{
 		// TODO Auto-generated method stub
 		
 	}
+	
 
 }

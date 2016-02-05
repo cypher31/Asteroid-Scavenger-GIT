@@ -54,6 +54,8 @@ public class Player extends SpaceObject{
 	public long playerCredit;
 	private int extraLives;
 	private long requiredScore;
+	public int getx;
+	public int gety;
 	
 	//Ship types
 	public  boolean freighterShip;
@@ -76,8 +78,8 @@ public class Player extends SpaceObject{
 		freighterShip = ChooseShipState.freighterShip;
 		
 		if(fighterShip == true){
-			shapex = new float[4];
-			shapey = new float[4];
+			shapex = new float[6];
+			shapey = new float[6];
 		}
 		if(freighterShip == true){
 			 shapex = new float[10];
@@ -91,7 +93,7 @@ public class Player extends SpaceObject{
 		rotationSpeed = 3;
 		
 		//fighter dimensions
-		fighterWidth = 8;
+		fighterWidth = 16;
 		fighterHeight = 8;
 		
 		//freighter dimensions
@@ -106,7 +108,6 @@ public class Player extends SpaceObject{
 		}else if(freighterShip == true){
 			playerWidth = freighterWidth;
 		}else{
-			System.out.println("no width");
 		}
 		
 		hit = false;
@@ -122,17 +123,23 @@ public class Player extends SpaceObject{
 	private void setShape(){
 		if(fighterShip == true){
 		//Tip of ship
-		shapex[0] = x + MathUtils.cos(radians) * fighterWidth;
-		shapey[0] = y + MathUtils.sin(radians) * fighterWidth;
+		shapex[0] = x + MathUtils.cos(radians) * fighterHeight;
+		shapey[0] = y + MathUtils.sin(radians) * fighterHeight;
+		//Right wing mid
+		shapex[1] = x + MathUtils.cos(radians - 2 * 3.1415f / 4) * fighterWidth / 6;
+		shapey[1] = y + MathUtils.sin(radians - 2 * 3.1415f / 4) * fighterWidth / 6;
 		//Right wing
-		shapex[1] = x + MathUtils.cos(radians - 4 * 3.1415f / 5) * fighterWidth;
-		shapey[1] = y + MathUtils.sin(radians - 4 * 3.1415f / 5) * fighterWidth;
+		shapex[2] = x + MathUtils.cos(radians - 5 * 3.1415f / 6) * fighterWidth;
+		shapey[2] = y + MathUtils.sin(radians - 5 * 3.1415f / 6) * fighterWidth;
 		//Center
-		shapex[2] = x + MathUtils.cos(radians + 3.1415f) * fighterHeight / 1.5f;
-		shapey[2] = y + MathUtils.sin(radians + 3.1415f) * fighterHeight / 1.5f;
-		//Left wing
-		shapex[3] = x + MathUtils.cos(radians + 4 * 3.1415f /5) * fighterWidth;
-		shapey[3] = y + MathUtils.sin(radians + 4 * 3.1415f / 5) * fighterWidth;
+		shapex[3] = x + MathUtils.cos(radians + 3.1415f) * fighterHeight / 1.5f;
+		shapey[3] = y + MathUtils.sin(radians + 3.1415f) * fighterHeight / 1.5f;
+		//Left wing 
+		shapex[4] = x + MathUtils.cos(radians + 5 * 3.1415f / 6) * fighterWidth;
+		shapey[4] = y + MathUtils.sin(radians + 5 * 3.1415f / 6) * fighterWidth;
+		//Left wing mid
+		shapex[5] = x + MathUtils.cos(radians + 2 * 3.1415f / 4) * fighterWidth / 6;
+		shapey[5] = y + MathUtils.sin(radians + 2 * 3.1415f / 4) * fighterWidth / 6;
 		}
 		
 		if(freighterShip == true){
@@ -176,8 +183,8 @@ public class Player extends SpaceObject{
 		}
 		
 		if(fighterShip == true){
-			flamex[0] = shapex[2];
-			flamey[0] = shapey[2];	
+			flamex[0] = shapex[3];
+			flamey[0] = shapey[3];	
 		}
 		
 		flamex[1] = x + MathUtils.cos(radians - 3.1415f) * (6 + acceleratingTimer * 150);
@@ -418,9 +425,9 @@ public class Player extends SpaceObject{
 //		wrap();
 	}
 	
-	private void playerLocation(){
-		float getx = MathUtils.round(getx());
-		float gety = MathUtils.round(gety());
+	public void playerLocation(){
+		getx = MathUtils.round(getx());
+		gety = MathUtils.round(gety());
 		
 		if(PlayState.Quad == "1"){
 			getx = getx;

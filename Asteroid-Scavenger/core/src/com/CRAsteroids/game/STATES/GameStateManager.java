@@ -27,7 +27,7 @@ public class GameStateManager {
 			gameState = new PlayState(this);
 		}
 		if(state == HIGHSCORE){
-			gameState = new HighScoreState(this);
+//			gameState = new HighScoreState(this);
 		}
 		if(state == GAMEOVER){
 			gameState = new GameOverState(this);

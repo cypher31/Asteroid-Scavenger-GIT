@@ -113,7 +113,6 @@ public class ChooseShipState extends GameState{
 		fighterButton.addListener(new ChangeListener(){
 		@Override
 		public void changed(ChangeEvent event, Actor actor){
-			System.out.println("fighter chosen");
 			gsm.setState(GameStateManager.PLAY);
 			fighterShip = true;
 			freighterShip = false;
@@ -124,7 +123,6 @@ public class ChooseShipState extends GameState{
 		fighterButton.addListener(new InputListener(){
 		@Override
 		public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-			System.out.println("fighter chosen");
 			gsm.setState(GameStateManager.PLAY);
 			fighterShip = true;
 			freighterShip = false;
@@ -137,7 +135,6 @@ public class ChooseShipState extends GameState{
 		freighterButton.addListener(new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
-				System.out.println("freighter chosen");
 				gsm.setState(GameStateManager.PLAY);
 				freighterShip = true;
 				fighterShip = false;
@@ -148,7 +145,6 @@ public class ChooseShipState extends GameState{
 		freighterButton.addListener(new InputListener(){
 		@Override
 		public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-			System.out.println("freighter chosen");
 			gsm.setState(GameStateManager.PLAY);
 			freighterShip = true;
 			fighterShip = false;

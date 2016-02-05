@@ -6,6 +6,7 @@ import com.CRAsteroids.game.CRAsteroidsGame;
 import com.CRAsteroids.game.Save;
 import com.CRAsteroids.game.Objects.Asteroid;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -129,7 +130,6 @@ public class MenuState extends GameState{
 					MathUtils.random(CRAsteroidsGame.HEIGHT), Asteroid.LARGE));
 		}
 		
-		Save.load();
 		
 	}
 
@@ -155,6 +155,9 @@ public class MenuState extends GameState{
 		sb.setProjectionMatrix(CRAsteroidsGame.cam.combined);
 		sr.setProjectionMatrix(CRAsteroidsGame.cam.combined);
 		
+		Gdx.gl.glClearColor(0, 0, 0, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		
 		//draw asteroids
 		for(int i = 0; i < asteroids.size(); i++){
 			asteroids.get(i).draw(sr);
@@ -171,7 +174,6 @@ public class MenuState extends GameState{
 		playButton.addListener(new ChangeListener(){
 		@Override
 		public void changed(ChangeEvent event, Actor actor){
-			System.out.println("play pressed");
 			gsm.setState(GameStateManager.ChooseShipState);
 		}
 		});
@@ -190,7 +192,6 @@ public class MenuState extends GameState{
 		highScoreButton.addListener(new ChangeListener(){
 			@Override
 			public void changed(ChangeEvent event, Actor actor){
-				System.out.println("highScore pressed");
 				gsm.setState(GameStateManager.HIGHSCORE);
 			}
 			});
@@ -234,6 +235,5 @@ public class MenuState extends GameState{
 //		font.dispose();
 	}
 
-	
 
 }
