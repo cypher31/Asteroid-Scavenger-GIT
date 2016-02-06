@@ -9,6 +9,8 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
@@ -29,10 +31,12 @@ public class CRAsteroidsGame implements ApplicationListener {
 	public static int mediumFontSize;
 	public static int largeFontSize;
 	
+	public static BitmapFont fontHUD;
 	public static BitmapFont fontSmall;
 	public static BitmapFont fontMedium;
 	public static BitmapFont fontLarge;
 	
+	public static LabelStyle hudStyle;
 	public static LabelStyle smallStyle;
 	public static LabelStyle mediumStyle;
 	public static LabelStyle largeStyle;
@@ -57,15 +61,27 @@ public class CRAsteroidsGame implements ApplicationListener {
 		//sets input processor to this
 		Gdx.input.setInputProcessor(new GameInputProcessor());
 		
-		fontSize();
-		
 		//Generate font
-		SmartFontGenerator fontGen = new SmartFontGenerator();
-		FileHandle exoFile = Gdx.files.internal("fonts/Hyperspace Bold.ttf");
-		fontSmall = fontGen.createFont(exoFile, "exo-small", 12);
-		fontMedium = fontGen.createFont(exoFile, "exo-medium", 20);
-		fontLarge = fontGen.createFont(exoFile, "exo-large", 45);
+//		SmartFontGenerator fontGen = new SmartFontGenerator();
+		
+		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Hyperspace Bold.ttf"));
+		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
+		parameter.size = 12;
+		BitmapFont fontHUD = generator.generateFont(parameter);
+		parameter.size = 24;
+		BitmapFont fontSmall = generator.generateFont(parameter); // font size 12 pixels
+		parameter.size = 42;
+		BitmapFont fontMedium = generator.generateFont(parameter); // font size 12 pixels
+		parameter.size = 72;
+		BitmapFont fontLarge = generator.generateFont(parameter); // font size 12 pixels
+		
+//		FileHandle exoFile = Gdx.files.internal("fonts/Hyperspace Bold.ttf");
+//		fontSmall = fontGen.createFont(exoFile, "exo-small", 12);
+//		fontMedium = fontGen.createFont(exoFile, "exo-medium", 20);
+//		fontLarge = fontGen.createFont(exoFile, "exo-large", 45);
 
+		hudStyle = new Label.LabelStyle();
+		hudStyle.font = fontHUD;
 		smallStyle = new Label.LabelStyle();
 		smallStyle.font = fontSmall;
 		mediumStyle = new Label.LabelStyle();
@@ -84,6 +100,8 @@ public class CRAsteroidsGame implements ApplicationListener {
 //		Jukebox.load("sounds/thruster.ogg", "thruster");
 		
 		gsm = new GameStateManager();
+		
+		generator.dispose();
 	}
 
 	@Override
@@ -112,7 +130,7 @@ public class CRAsteroidsGame implements ApplicationListener {
 		mediumFontSize = (int) (Gdx.graphics.getWidth() * .025f);
 		largeFontSize = (int) (Gdx.graphics.getWidth() * .030f);
 	}
-
+	
 	@Override
 	public void pause() {
 	}

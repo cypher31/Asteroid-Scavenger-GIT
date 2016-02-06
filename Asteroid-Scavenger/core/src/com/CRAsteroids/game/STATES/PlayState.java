@@ -142,7 +142,7 @@ public class PlayState extends GameState implements InputProcessor{
 		playViewPort = new FitViewport(CRAsteroidsGame.WIDTH, CRAsteroidsGame.HEIGHT);
 		playerHud = new Stage(playViewPort);
 		
-		scoreStyle = CRAsteroidsGame.smallStyle;
+		scoreStyle = CRAsteroidsGame.hudStyle;
 		
 		hudScore = new Label("Score: 0", scoreStyle);
 		lives = new Label("Extra Lives: " + player.getLives(), scoreStyle);
@@ -173,20 +173,11 @@ public class PlayState extends GameState implements InputProcessor{
 		locationTable.align(Align.bottom).align(Align.right);
 		locationTable.add(location).padRight(Gdx.graphics.getWidth() * .025f);
 		
-		playerHud.setDebugAll(true);
-		scoreTable.setDebug(true);
-		livesTable.setDebug(true);
-		locationTable.setDebug(true);
+//		playerHud.setDebugAll(true);
+//		scoreTable.setDebug(true);
+//		livesTable.setDebug(true);
+//		locationTable.setDebug(true);
 		
-//				sb.setColor(1, 1, 1, 1);
-//				sb.begin();
-//				String playerScore = Long.toString(player.getScore());
-//				TextBounds playerScoreBounds = font.getBounds(playerScore);
-//				font.draw(
-//						sb, 
-//						playerScore, 
-//						player.getx() - playerScoreBounds.width / 2,
-//						player.gety() + 450);
 	}
 	
 
