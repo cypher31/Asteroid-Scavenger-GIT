@@ -99,12 +99,6 @@ public class ChooseShipState extends GameState{
 		stage.act(Gdx.graphics.getDeltaTime());
 		stage.draw();
 
-//		fighterHud.setPosition(Gdx.graphics.getWidth() / 2 - 100 - fighterButton.getWidth() / 2, Gdx.graphics.getHeight() / 2);
-//		fighterHud.draw(sr);
-//	
-//		freighterHud.setPosition(Gdx.graphics.getWidth() / 2 + 100 + fighterButton.getWidth() / 2, Gdx.graphics.getHeight() / 2);
-//		freighterHud.draw(sr);
-		
 	}
 
 	@Override

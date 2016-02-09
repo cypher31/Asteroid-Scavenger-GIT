@@ -11,6 +11,7 @@ import com.CRAsteroids.game.Objects.FlyingSaucer;
 import com.CRAsteroids.game.Objects.Particle;
 import com.CRAsteroids.game.Objects.Player;
 import com.CRAsteroids.game.Objects.Stars;
+import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
@@ -22,11 +23,19 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
@@ -36,6 +45,7 @@ public class PlayState extends GameState implements InputProcessor{
 	private ShapeRenderer sr;
 	
 	private long startTime;
+	private long shootTime;
 	
 	public static boolean isFlashing;
 	
@@ -48,6 +58,7 @@ public class PlayState extends GameState implements InputProcessor{
 	private FitViewport playViewPort;
 	private Stage playerHud;
 	private LabelStyle scoreStyle;
+	private LabelStyle buttonStyle;
 	private Label hudScore;
 	private Label lives;
 	private Label creditsHud;
@@ -61,6 +72,14 @@ public class PlayState extends GameState implements InputProcessor{
 	private Table livesTable;
 	private Table creditsTable;
 	private Table locationTable;
+	private Table buttonTableLeft;
+	private Table buttonTableRight;
+	private TextButtonStyle tbs;
+	private TextButton turnLeftAndroid;
+	private TextButton turnRightAndroid;
+	private TextButton shootAndroid;
+	private TextButton thrustOnAndroid;
+	private TextButton thrustOffAndroid;
 	
 	private BitmapFont font;
 	private Player hudPlayer;
@@ -89,6 +108,7 @@ public class PlayState extends GameState implements InputProcessor{
 	private float currentDelay;
 	private float bgTimer;
 	private boolean playLowPulse;
+	private boolean isDown;
 
 	protected PlayState(GameStateManager gsm) {
 		super(gsm);
@@ -96,6 +116,8 @@ public class PlayState extends GameState implements InputProcessor{
 
 	@Override
 	public void init() {
+		
+		shootTime = TimeUtils.nanoTime();
 		
 		sb = new SpriteBatch();
 		sr = new ShapeRenderer();
@@ -129,7 +151,11 @@ public class PlayState extends GameState implements InputProcessor{
 		fsTime = 15;
 		enemyBullets = new ArrayList<Bullet>();
 		
-		Gdx.input.setInputProcessor(this);
+		if(Gdx.app.getType() == ApplicationType.Android){
+			Gdx.input.setInputProcessor(playerHud);
+		}else{
+			Gdx.input.setInputProcessor(this);
+		}
 		
 		//Set up bg music
 		maxDelay = 1;
@@ -142,41 +168,74 @@ public class PlayState extends GameState implements InputProcessor{
 		playViewPort = new FitViewport(CRAsteroidsGame.WIDTH, CRAsteroidsGame.HEIGHT);
 		playerHud = new Stage(playViewPort);
 		
+		
 		scoreStyle = CRAsteroidsGame.hudStyle;
+		buttonStyle = CRAsteroidsGame.mediumStyle;
 		
 		hudScore = new Label("Score: 0", scoreStyle);
 		lives = new Label("Extra Lives: " + player.getLives(), scoreStyle);
 		creditsHud = new Label("Credits: " + player.getPlayerCredit(), scoreStyle);
 		location = new Label("Location: " + "Sector(" + Quad + ")" + player.getx +  " , " + player.gety, scoreStyle);
 		
+		//Buttons
+		tbs = new TextButtonStyle();
+		tbs.font = buttonStyle.font;
+		
 		//add actors
 		scoreTable = new Table();
-		livesTable = new Table();
-		creditsTable = new Table();
 		locationTable = new Table();
+		buttonTableLeft = new Table();
+		buttonTableRight = new Table();
+		turnLeftAndroid = new TextButton("LEFT ", tbs);
+		turnRightAndroid = new TextButton("RIGHT", tbs);
+		shootAndroid = new TextButton("Shoot", tbs);
+		thrustOnAndroid = new TextButton("Thrust On", tbs);
+		thrustOffAndroid = new TextButton("Thrust Off", tbs);
 		
 		scoreTable.setFillParent(true);
-		livesTable.setFillParent(true);
-		creditsTable.setFillParent(true);
 		locationTable.setFillParent(true);
+		buttonTableLeft.setFillParent(true);
+		buttonTableRight.setFillParent(true);
 		
 		playerHud.addActor(scoreTable);
-		playerHud.addActor(livesTable);
-		playerHud.addActor(creditsTable);
 		playerHud.addActor(locationTable);
+		playerHud.addActor(buttonTableLeft);
+		playerHud.addActor(buttonTableRight);
 		
 		scoreTable.align(Align.top);
 		scoreTable.add(hudScore).padTop(Gdx.graphics.getHeight() * .025f).row();
 		scoreTable.add(creditsHud).row();
 		scoreTable.add(lives);
 		
-		locationTable.align(Align.bottom).align(Align.right);
+		locationTable.align(Align.bottomRight);
 		locationTable.add(location).padRight(Gdx.graphics.getWidth() * .025f);
+		
+//		if(Gdx.app.getType() == ApplicationType.Android){
+			buttonTableLeft.align(Align.bottomLeft).padBottom(Gdx.graphics.getHeight() * 0.1f);
+			buttonTableLeft.add(turnLeftAndroid).padLeft(Gdx.graphics.getWidth() * .05f);
+			buttonTableLeft.defaults().height(100);
+			buttonTableLeft.add(turnRightAndroid).padLeft(Gdx.graphics.getWidth() * .025f);
+			buttonTableLeft.row().align(Align.center).colspan(2).padLeft(Gdx.graphics.getWidth() * .05f).padTop(Gdx.graphics.getHeight() * .05f);
+			buttonTableLeft.add(thrustOnAndroid);
+			buttonTableLeft.row().align(Align.center).colspan(2).padLeft(Gdx.graphics.getWidth() * .05f).padTop(Gdx.graphics.getHeight() * .05f);
+			buttonTableLeft.add(thrustOffAndroid);
+			
+			buttonTableRight.align(Align.bottomRight).padBottom(Gdx.graphics.getHeight() * 0.3f);
+			buttonTableRight.defaults().height(100);
+			buttonTableRight.add(shootAndroid).padRight(Gdx.graphics.getWidth() * .1f);
+			
+			buttonTableLeft.setDebug(true);
+			buttonTableRight.setDebug(true);
+			turnLeftAndroid.setDebug(true);
+			turnRightAndroid.setDebug(true);
+//		}
+		
 		
 //		playerHud.setDebugAll(true);
 //		scoreTable.setDebug(true);
 //		livesTable.setDebug(true);
 //		locationTable.setDebug(true);
+		
 		
 	}
 	
@@ -232,13 +291,26 @@ public class PlayState extends GameState implements InputProcessor{
 	
 	@Override
 	public void update(float dt) {
-		handleInput();
+		if(Gdx.app.getType() == ApplicationType.Android)
+			handleInput();
+			
+		
+		if(isDown == true && TimeUtils.timeSinceNanos(shootTime) > 150000000 && !player.isHit()){
+			player.shoot();
+			shootTime = TimeUtils.nanoTime();
+		}
 		
 		Quadrants();
 		
-		cam = new OrthographicCamera(CRAsteroidsGame.WIDTH, CRAsteroidsGame.HEIGHT);
-		cam.position.set(player.getx(), player.gety(), 0);
-		cam.update();
+		if(Gdx.app.getType() == ApplicationType.Android){
+			cam = new OrthographicCamera(CRAsteroidsGame.WIDTH / 2, CRAsteroidsGame.HEIGHT / 2);
+			cam.position.set(player.getx(), player.gety(), 0);
+			cam.update();
+		}else{
+			cam = new OrthographicCamera(CRAsteroidsGame.WIDTH, CRAsteroidsGame.HEIGHT);
+			cam.position.set(player.getx(), player.gety(), 0);
+			cam.update();
+		}
 		
 		//next level
 		if(asteroids.size() == 0){
@@ -337,6 +409,9 @@ public class PlayState extends GameState implements InputProcessor{
 		
 		//hyperDrive
 		hyperDrive();
+		
+		if(Gdx.app.getType() == ApplicationType.Android)
+			Gdx.input.setInputProcessor(playerHud);
 		
 //		//play bg music
 //		bgTimer += dt;
@@ -618,18 +693,18 @@ public class PlayState extends GameState implements InputProcessor{
 	public boolean keyDown(int k) {
 		if(k == Keys.UP) {
 			if(!player.isHit())
-			player.setUp(true);
+				player.setUp(true);
 		}
 		if(k == Keys.LEFT) {
 			if(!player.isHit())
-			player.setLeft(true);
+				player.setLeft(true);
 		}
 		if(k == Keys.DOWN) {
 			GameKeys.setKey(GameKeys.DOWN, true);
 		}
 		if(k == Keys.RIGHT) {
 			if(!player.isHit())
-			player.setRight(true);
+				player.setRight(true);
 		}
 		if(k == Keys.ENTER) {
 			GameKeys.setKey(GameKeys.ENTER, true);
@@ -639,7 +714,7 @@ public class PlayState extends GameState implements InputProcessor{
 		}
 		if(k == Keys.SPACE) {
 			if(!player.isHit())
-			player.shoot();
+				player.shoot();
 		}
 		if(k == Keys.SHIFT_LEFT || k == Keys.SHIFT_RIGHT) {
 			startTime = TimeUtils.nanoTime();
@@ -684,46 +759,46 @@ public class PlayState extends GameState implements InputProcessor{
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		
-		lastTouch.set(screenX, screenY);
-		
-		if(Gdx.input.isTouched(0)){
-			player.setUp(true);
-		}
-		
-		if(Gdx.input.isTouched(1)){
-			player.shoot();
-		}
+		//MultiTouch
+//		lastTouch.set(screenX, screenY);
+//		
+//		if(Gdx.input.isTouched(0)){
+//			player.setUp(true);
+//		}
+//		
+//		if(Gdx.input.isTouched(1)){
+//			player.shoot();
+//		}
 		return true;
 	}
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		
-		player.setUp(false);
-		player.setLeft(false);
-		player.setRight(false);
+//		
+//		player.setUp(false);
+//		player.setLeft(false);
+//		player.setRight(false);
 		return true;
 	}
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
 		
-		Vector2 newTouch = new Vector2(screenX, screenY);
-		// delta will now hold the difference between the last and the current touch positions
-	    // delta.x > 0 means the touch moved to the right, delta.x < 0 means a move to the left
-	    Vector2 delta = newTouch.cpy().sub(lastTouch);
-	    lastTouch = newTouch;
-	    
-	    if(delta.x > 0){
-	    	player.setRight(true);
-	    	player.setLeft(false);
-	    } 
-	    
-	    if(delta.x < 0){
-	    	player.setLeft(true);
-	    	player.setRight(false);
-	    }
+//		Vector2 newTouch = new Vector2(screenX, screenY);
+//		// delta will now hold the difference between the last and the current touch positions
+//	    // delta.x > 0 means the touch moved to the right, delta.x < 0 means a move to the left
+//	    Vector2 delta = newTouch.cpy().sub(lastTouch);
+//	    lastTouch = newTouch;
+//	    
+//	    if(delta.x > 0){
+//	    	player.setRight(true);
+//	    	player.setLeft(false);
+//	    } 
+//	    
+//	    if(delta.x < 0){
+//	    	player.setLeft(true);
+//	    	player.setRight(false);
+//	    }
 	    
 	    return true;
 	}
@@ -742,8 +817,68 @@ public class PlayState extends GameState implements InputProcessor{
 
 	@Override
 	public void handleInput() {
-		// TODO Auto-generated method stub
 		
+		turnLeftAndroid.addListener(new InputListener(){
+		@Override
+		public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+			player.setLeft(true);
+			player.setRight(false);
+			return true;
+		}
+		@Override
+		public void touchUp(InputEvent event, float x, float y, int pointer, int button){
+			player.setLeft(false);
+		}
+		
+		});
+		
+		//play button touch 
+		turnRightAndroid.addListener(new InputListener(){
+		@Override
+		public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+			player.setRight(true);
+			return true;
+		}
+		
+		@Override
+		public void touchUp(InputEvent event, float x, float y, int pointer, int button){
+			player.setRight(false);
+		}
+		
+		});
+		
+		//play button touch 
+		shootAndroid.addListener(new InputListener(){
+		@Override
+		public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+			isDown = true;
+			return true;
+		}
+		
+		@Override
+		public void touchUp(InputEvent event, float x, float y, int pointer, int button){
+			isDown = false;
+		}
+		
+		});
+		
+		//play button touch 
+		thrustOnAndroid.addListener(new InputListener(){
+		@Override
+		public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+			player.setUp(true);;
+			return true;
+		}		
+		});
+		
+		//play button touch 
+		thrustOffAndroid.addListener(new InputListener(){
+		@Override
+		public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+			player.setUp(false);;
+			return true;
+		}		
+		});
 	}
 	
 

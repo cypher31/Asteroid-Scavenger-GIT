@@ -11,6 +11,7 @@ public class Credits extends SpaceObject{
 	
 	public long score;
 	private long creditWorth;
+	private int creditSize;
 	
 	public Credits(float x, float y){
 		
@@ -27,22 +28,23 @@ public class Credits extends SpaceObject{
 		dy = MathUtils.sin(radians) * speed;
 		
 		creditWorth = MathUtils.random(50, 150);
+		creditSize = 5;
 		
 	}
 	
 	private void setShape(){
 		
-		shapex[0] = x + MathUtils.cos(radians) * 4;
-		shapey[0] = y + MathUtils.sin(radians) * 4;
+		shapex[0] = x + MathUtils.cos(radians) * creditSize;
+		shapey[0] = y + MathUtils.sin(radians) * creditSize;
 		
-		shapex[1] = x + MathUtils.cos(radians + 3.1415f / 2) * 4;
-		shapey[1] = y + MathUtils.sin(radians + 3.1415f / 2) * 4;
+		shapex[1] = x + MathUtils.cos(radians + 3.1415f / 2) * creditSize;
+		shapey[1] = y + MathUtils.sin(radians + 3.1415f / 2) * creditSize;
 		
-		shapex[2] = x + MathUtils.cos(radians + 3.1415f) * 4;
-		shapey[2] = y + MathUtils.sin(radians + 3.1415f) * 4;
+		shapex[2] = x + MathUtils.cos(radians + 3.1415f) * creditSize;
+		shapey[2] = y + MathUtils.sin(radians + 3.1415f) * creditSize;
 		
-		shapex[3] = x + MathUtils.cos(radians + 3.1415f + 3.1415f / 2) * 4;
-		shapey[3] = y + MathUtils.sin(radians + 3.1415f + 3.1415f / 2) * 4;
+		shapex[3] = x + MathUtils.cos(radians + 3.1415f + 3.1415f / 2) * creditSize;
+		shapey[3] = y + MathUtils.sin(radians + 3.1415f + 3.1415f / 2) * creditSize;
 	}
 	
 	public void setPosition(float x, float y){

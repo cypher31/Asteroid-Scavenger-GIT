@@ -106,6 +106,7 @@ public class MenuState extends GameState{
 		titleTable.add(titleName).top();
 
 		//buttons
+		optionsTable.defaults().space(50);
 		optionsTable.add(playButton).align(Align.center).row();
 		optionsTable.add(highScoreButton).align(Align.center).row();
 		optionsTable.add(quitButton).align(Align.center).row();
