@@ -210,7 +210,7 @@ public class PlayState extends GameState implements InputProcessor{
 		locationTable.align(Align.bottomRight);
 		locationTable.add(location).padRight(Gdx.graphics.getWidth() * .025f);
 		
-//		if(Gdx.app.getType() == ApplicationType.Android){
+		if(Gdx.app.getType() == ApplicationType.Android){
 			buttonTableLeft.align(Align.bottomLeft).padBottom(Gdx.graphics.getHeight() * 0.1f);
 			buttonTableLeft.add(turnLeftAndroid).padLeft(Gdx.graphics.getWidth() * .05f);
 			buttonTableLeft.defaults().height(100);
@@ -228,7 +228,7 @@ public class PlayState extends GameState implements InputProcessor{
 			buttonTableRight.setDebug(true);
 			turnLeftAndroid.setDebug(true);
 			turnRightAndroid.setDebug(true);
-//		}
+		}
 		
 		
 //		playerHud.setDebugAll(true);
@@ -264,26 +264,26 @@ public class PlayState extends GameState implements InputProcessor{
 	private void spawnAsteroids(){
 		asteroids.clear();
 		
-		int numToSpawn = 4 + level - 1;
+		int numToSpawn = 1000;
 		totalAsteroids = numToSpawn * 7;
 		numAsteroidsLeft = totalAsteroids;
 		currentDelay = maxDelay;
 		
 		for(int i = 0; i < numToSpawn; i++){
-			float x = MathUtils.random(CRAsteroidsGame.WIDTH);
-			float y = MathUtils.random(CRAsteroidsGame.HEIGHT);
+			float x = MathUtils.random(0, 10000);
+			float y = MathUtils.random(0, 40000);
 			
-			float dx = x - player.getx();
-			float dy = y - player.gety();
-			float dist = (float) Math.sqrt(dx * dx + dy * dy);
-			
-			while (dist < 100){
-				x = MathUtils.random(CRAsteroidsGame.WIDTH);
-				y = MathUtils.random(CRAsteroidsGame.HEIGHT);
-				dx = x - player.getx();
-				dy = y - player.gety();
-				dist = (float) Math.sqrt(dx * dx + dy * dy);
-			}
+//			float dx = x - player.getx();
+//			float dy = y - player.gety();
+//			float dist = (float) Math.sqrt(dx * dx + dy * dy);
+//			
+//			while (dist < 100){
+//				x = MathUtils.random(CRAsteroidsGame.WIDTH);
+//				y = MathUtils.random(CRAsteroidsGame.HEIGHT);
+//				dx = x - player.getx();
+//				dy = y - player.gety();
+//				dist = (float) Math.sqrt(dx * dx + dy * dy);
+//			}
 			
 			asteroids.add(new Asteroid(x, y, Asteroid.LARGE));
 		}
@@ -618,8 +618,11 @@ public class PlayState extends GameState implements InputProcessor{
 		}
 		
 		//draw asteroids
+		
 		for(int i = 0; i < asteroids.size(); i++){
-			asteroids.get(i).draw(sr);
+			if(cam.frustum.pointInFrustum(asteroids.get(i).getx(), asteroids.get(i).gety(), 0)){
+				asteroids.get(i).draw(sr);
+			}
 		}
 		
 		//draw particles
