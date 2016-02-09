@@ -394,9 +394,10 @@ public class Player extends SpaceObject{
 		
 		//accelerating
 		if(up == true && hyperDrive == true){
-			dx += MathUtils.cos(radians) * acceleration * 100 * dt;
-			dy += MathUtils.sin(radians) * acceleration * 100 * dt;
+			dx += MathUtils.cos(radians) * acceleration * 200 * dt;
+			dy += MathUtils.sin(radians) * acceleration * 200 * dt;
 			acceleratingTimer += dt;
+			rotationSpeed = 1;
 			if(acceleratingTimer > .3f){
 				acceleratingTimer = 0;
 			}
@@ -406,6 +407,8 @@ public class Player extends SpaceObject{
 			acceleratingTimer += dt;
 			if(acceleratingTimer > .1f){
 				acceleratingTimer = 0;
+		}else{
+			rotationSpeed = 3;
 		}
 	}
 		

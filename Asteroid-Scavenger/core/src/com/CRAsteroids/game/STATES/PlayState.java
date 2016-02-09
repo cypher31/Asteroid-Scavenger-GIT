@@ -42,6 +42,7 @@ public class PlayState extends GameState implements InputProcessor{
 	
 	private long startTime;
 	private long shootTime;
+	public long hitTime;
 	
 	public static boolean isFlashing;
 	
@@ -118,6 +119,7 @@ public class PlayState extends GameState implements InputProcessor{
 	public void init() {
 		
 		shootTime = TimeUtils.nanoTime();
+		hitTime = TimeUtils.nanoTime();
 		
 		sb = new SpriteBatch();
 		sr = new ShapeRenderer();
@@ -213,8 +215,9 @@ public class PlayState extends GameState implements InputProcessor{
 		scoreTable.add(lives);
 		
 		healthTable.align(Align.topLeft).defaults().width(150).padTop(Gdx.graphics.getHeight() * .025f);
-		healthTable.add(hudShield).row();
-		healthTable.add(hudHealth);
+		healthTable.add(hudShield).getActor().setAlignment(Align.right);
+		healthTable.row();
+		healthTable.add(hudHealth).getActor().setAlignment(Align.right);
 		
 		locationTable.align(Align.bottomRight);
 		locationTable.add(location).padRight(Gdx.graphics.getWidth() * .025f);
@@ -300,6 +303,7 @@ public class PlayState extends GameState implements InputProcessor{
 	
 	@Override
 	public void update(float dt) {
+		
 		if(Gdx.app.getType() == ApplicationType.Android)
 			handleInput();
 			
@@ -443,6 +447,15 @@ public class PlayState extends GameState implements InputProcessor{
 				Asteroid a = asteroids.get(i);
 				if(a.intersects(player)){
 					player.hit();
+					int crashDamage = 15;
+					if(player.playerShield > 0 && !player.isHit() && TimeUtils.timeSinceNanos(hitTime) > 2000000000){
+						player.playerShield -= crashDamage * 2;
+						hitTime = System.nanoTime();
+					} else if(player.playerShield == 0 && !player.isHit() && TimeUtils.timeSinceNanos(hitTime) > 2000000000){
+						player.playerHealth -= crashDamage;
+						hitTime = System.nanoTime();
+					}
+					System.out.println((player.playerShield));
 					asteroids.remove(i);
 					i--;
 					splitAsteroid(a);
@@ -503,6 +516,14 @@ public class PlayState extends GameState implements InputProcessor{
 		if(flyingSaucer != null){
 			if(player.intersects(flyingSaucer)){
 				player.hit();
+				int crashDamage = 15;
+				if(player.playerShield > 0 && !player.isHit() && TimeUtils.timeSinceNanos(hitTime) > 200000000){
+					player.playerShield -= crashDamage * 2;
+					hitTime = System.nanoTime();
+				} else if (player.playerShield == 0 && !player.isHit() && TimeUtils.timeSinceNanos(hitTime) > 200000000){
+					player.playerHealth -= crashDamage;
+					hitTime = System.nanoTime();
+				}
 				createParticles(player.getx(), player.gety());
 				createParticles(flyingSaucer.getx(), flyingSaucer.gety());
 				flyingSaucer = null;
@@ -539,7 +560,13 @@ public class PlayState extends GameState implements InputProcessor{
 					enemyBullets.remove(i);
 					i--;
 					int bulletDamage = 5;
-					player.playerHealth -= bulletDamage;
+					if(player.playerShield > 0 && !player.isHit() && TimeUtils.timeSinceNanos(hitTime) > 200000000){
+						player.playerShield -= bulletDamage * 2;
+						hitTime = System.nanoTime();
+					} else if(player.playerShield == 0 && !player.isHit() && TimeUtils.timeSinceNanos(hitTime) > 200000000){
+						player.playerHealth -= bulletDamage;
+						hitTime = System.nanoTime();
+					}
 					System.out.println(player.playerHealth);
 //					Jukebox.play("explode");
 					break;
@@ -647,10 +674,17 @@ public class PlayState extends GameState implements InputProcessor{
 		playerScore = Long.toString(player.getScore());
 		hudScore.setText("Score: " + playerScore);
 		
+		if(player.getPlayerHealth() < 0){
+			player.playerHealth = 0;
+		}
 		playerHealth = Integer.toString(player.getPlayerHealth());
 		hudHealth.setText("Armor: " + playerHealth);
 		
+		if(player.getPlayerShield() < 0){
+			player.playerShield = 0;
+		}
 		playerShield = Integer.toString(player.getPlayerShield());
+		
 		hudShield.setText("Shield: " + playerShield);
 		
 		playerCredits = Long.toString(player.getPlayerCredit());
