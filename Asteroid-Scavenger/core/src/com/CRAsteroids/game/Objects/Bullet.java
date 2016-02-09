@@ -1,6 +1,5 @@
 package com.CRAsteroids.game.Objects;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.MathUtils;
@@ -9,6 +8,7 @@ public class Bullet extends SpaceObject{
 
 	private float lifeTime;
 	private float lifeTimer;
+	public int bulletDamage;
 	
 	private boolean remove;
 	
@@ -17,6 +17,8 @@ public class Bullet extends SpaceObject{
 		this.x = x;
 		this.y = y;
 		this.radians = radians;
+		
+		bulletDamage = 5;
 		
 		float speed = 350;
 		dx = MathUtils.cos(radians) * speed;
@@ -37,8 +39,6 @@ public class Bullet extends SpaceObject{
 		
 		x += dx * dt;
 		y += dy * dt;
-		
-//		wrap();
 		
 		lifeTimer += dt;
 		if(lifeTimer > lifeTime){

@@ -23,19 +23,15 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
@@ -63,13 +59,15 @@ public class PlayState extends GameState implements InputProcessor{
 	private Label lives;
 	private Label creditsHud;
 	private Label location;
+	private Label hudHealth;
 	private String playerScore;
 	private String playerCredits;
 	private String playerLives;
 	private String playerLocationX;
 	private String playerLocationY;
+	private String playerHealth;
 	private Table scoreTable;
-	private Table livesTable;
+	private Table healthTable;
 	private Table creditsTable;
 	private Table locationTable;
 	private Table buttonTableLeft;
@@ -116,6 +114,8 @@ public class PlayState extends GameState implements InputProcessor{
 
 	@Override
 	public void init() {
+		
+//		enemy = new Enemy();
 		
 		shootTime = TimeUtils.nanoTime();
 		
@@ -176,6 +176,7 @@ public class PlayState extends GameState implements InputProcessor{
 		lives = new Label("Extra Lives: " + player.getLives(), scoreStyle);
 		creditsHud = new Label("Credits: " + player.getPlayerCredit(), scoreStyle);
 		location = new Label("Location: " + "Sector(" + Quad + ")" + player.getx +  " , " + player.gety, scoreStyle);
+		hudHealth = new Label("Armor: " + player.getPlayerHealth(), scoreStyle);
 		
 		//Buttons
 		tbs = new TextButtonStyle();
@@ -183,6 +184,7 @@ public class PlayState extends GameState implements InputProcessor{
 		
 		//add actors
 		scoreTable = new Table();
+		healthTable = new Table();
 		locationTable = new Table();
 		buttonTableLeft = new Table();
 		buttonTableRight = new Table();
@@ -193,11 +195,13 @@ public class PlayState extends GameState implements InputProcessor{
 		thrustOffAndroid = new TextButton("Thrust Off", tbs);
 		
 		scoreTable.setFillParent(true);
+		healthTable.setFillParent(true);
 		locationTable.setFillParent(true);
 		buttonTableLeft.setFillParent(true);
 		buttonTableRight.setFillParent(true);
 		
 		playerHud.addActor(scoreTable);
+		playerHud.addActor(healthTable);
 		playerHud.addActor(locationTable);
 		playerHud.addActor(buttonTableLeft);
 		playerHud.addActor(buttonTableRight);
@@ -206,6 +210,9 @@ public class PlayState extends GameState implements InputProcessor{
 		scoreTable.add(hudScore).padTop(Gdx.graphics.getHeight() * .025f).row();
 		scoreTable.add(creditsHud).row();
 		scoreTable.add(lives);
+		
+		healthTable.align(Align.topLeft).padTop(Gdx.graphics.getHeight() * .025f);
+		healthTable.add(hudHealth);
 		
 		locationTable.align(Align.bottomRight);
 		locationTable.add(location).padRight(Gdx.graphics.getWidth() * .025f);
@@ -529,6 +536,9 @@ public class PlayState extends GameState implements InputProcessor{
 					player.hit();
 					enemyBullets.remove(i);
 					i--;
+					int bulletDamage = 5;
+					player.playerHealth -= bulletDamage;
+					System.out.println(player.playerHealth);
 //					Jukebox.play("explode");
 					break;
 				}
@@ -634,6 +644,8 @@ public class PlayState extends GameState implements InputProcessor{
 		if(player!= null){
 		playerScore = Long.toString(player.getScore());
 		hudScore.setText("Score: " + playerScore);
+		playerHealth = Integer.toString(player.getPlayerHealth());
+		hudHealth.setText("Armor: " + playerHealth);
 		playerCredits = Long.toString(player.getPlayerCredit());
 		creditsHud.setText("Credits: " + playerCredits);
 		playerLives = Long.toString(player.getLives());

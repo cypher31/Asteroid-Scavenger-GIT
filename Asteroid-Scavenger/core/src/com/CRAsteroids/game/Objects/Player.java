@@ -34,6 +34,7 @@ public class Player extends SpaceObject{
 	
 	//Ship properties
 	public int playerWidth;
+	public int playerHealth;
 	private int fighterWidth;
 	private int fighterHeight;
 	
@@ -65,6 +66,8 @@ public class Player extends SpaceObject{
 	public Player(ArrayList<Bullet> bullets){
 		
 		startTime = TimeUtils.nanoTime();
+		
+		playerHealth = 100;
 		
 		this.bullets = bullets;
 		
@@ -220,6 +223,7 @@ public class Player extends SpaceObject{
 	
 	public boolean isHit(){
 		return hit;
+		
 	}
 	
 	public boolean isDead(){
@@ -239,6 +243,10 @@ public class Player extends SpaceObject{
 	
 	public long getPlayerCredit(){
 		return playerCredit;
+	}
+	
+	public int getPlayerHealth(){
+		return playerHealth;
 	}
 	
 	public int getLives(){
@@ -274,72 +282,74 @@ public class Player extends SpaceObject{
 	
 	public void hit(){
 		
-		if(hit) return;
-		
-		hit = true;
-		dx = dy = 0;
-		left = right = up = false;
-//		Jukebox.stop("thruster");
-		
-		if(fighterShip == true)
-			hitLines = new Line2D.Float[4];
-		if(freighterShip == true)
-			hitLines = new Line2D.Float[10];
-		
-		for(int i = 0, j = hitLines.length - 1; i < hitLines.length; j = i++){
-			hitLines[i] = new Line2D.Float(shapex[i], shapey[i], shapex[j], shapey[j]);
-		}
-		
-		if(fighterShip == true){
-			hitLinesVector = new Point2D.Float[4];
+		if(playerHealth == 0){
+			if(hit) return;
 			
-			hitLinesVector[0] = new Point2D.Float(MathUtils.cos(radians + 1.5f),
-					MathUtils.sin(radians + 1.5f));
+			hit = true;
+			dx = dy = 0;
+			left = right = up = false;
+	//		Jukebox.stop("thruster");
 			
-			hitLinesVector[1] = new Point2D.Float(MathUtils.cos(radians - 1.5f),
-					MathUtils.sin(radians - 1.5f));
+			if(fighterShip == true)
+				hitLines = new Line2D.Float[4];
+			if(freighterShip == true)
+				hitLines = new Line2D.Float[10];
 			
-			hitLinesVector[2] = new Point2D.Float(MathUtils.cos(radians - 2.8f),
-					MathUtils.sin(radians - 2.8f));
+			for(int i = 0, j = hitLines.length - 1; i < hitLines.length; j = i++){
+				hitLines[i] = new Line2D.Float(shapex[i], shapey[i], shapex[j], shapey[j]);
+			}
 			
-			hitLinesVector[3] = new Point2D.Float(MathUtils.cos(radians + 2.8f),
-					MathUtils.sin(radians + 2.8f));
-		
-		}
-		
-		if(freighterShip == true){
-			hitLinesVector = new Point2D.Float[10];
+			if(fighterShip == true){
+				hitLinesVector = new Point2D.Float[4];
+				
+				hitLinesVector[0] = new Point2D.Float(MathUtils.cos(radians + 1.5f),
+						MathUtils.sin(radians + 1.5f));
+				
+				hitLinesVector[1] = new Point2D.Float(MathUtils.cos(radians - 1.5f),
+						MathUtils.sin(radians - 1.5f));
+				
+				hitLinesVector[2] = new Point2D.Float(MathUtils.cos(radians - 2.8f),
+						MathUtils.sin(radians - 2.8f));
+				
+				hitLinesVector[3] = new Point2D.Float(MathUtils.cos(radians + 2.8f),
+						MathUtils.sin(radians + 2.8f));
 			
-			hitLinesVector[0] = new Point2D.Float(MathUtils.cos(radians + MathUtils.random(-3, 3)),
-					MathUtils.sin(radians + MathUtils.random(-3, 3)));
+			}
 			
-			hitLinesVector[1] = new Point2D.Float(MathUtils.cos(radians - MathUtils.random(-3, 3)),
-					MathUtils.sin(radians - MathUtils.random(-3, 3)));
-			
-			hitLinesVector[2] = new Point2D.Float(MathUtils.cos(radians - MathUtils.random(-3, 3)),
-					MathUtils.sin(radians - MathUtils.random(-3, 3)));
-			
-			hitLinesVector[3] = new Point2D.Float(MathUtils.cos(radians + MathUtils.random(-3, 3)),
-					MathUtils.sin(radians + MathUtils.random(-3, 3)));
-			
-			hitLinesVector[4] = new Point2D.Float(MathUtils.cos(radians + MathUtils.random(-3, 3)),
-					MathUtils.sin(radians + MathUtils.random(-3, 3)));
-			
-			hitLinesVector[5] = new Point2D.Float(MathUtils.cos(radians - MathUtils.random(-3, 3)),
-					MathUtils.sin(radians - MathUtils.random(-3, 3)));
-			
-			hitLinesVector[6] = new Point2D.Float(MathUtils.cos(radians - MathUtils.random(-3, 3)),
-					MathUtils.sin(radians - MathUtils.random(-3, 3)));
-			
-			hitLinesVector[7] = new Point2D.Float(MathUtils.cos(radians + MathUtils.random(-3, 3)),
-					MathUtils.sin(radians + MathUtils.random(-3, 3)));
-			
-			hitLinesVector[8] = new Point2D.Float(MathUtils.cos(radians - MathUtils.random(-3, 3)),
-					MathUtils.sin(radians - MathUtils.random(-3, 3)));
-			
-			hitLinesVector[9] = new Point2D.Float(MathUtils.cos(radians + MathUtils.random(-3, 3)),
-					MathUtils.sin(radians + MathUtils.random(-3, 3)));
-			
+			if(freighterShip == true){
+				hitLinesVector = new Point2D.Float[10];
+				
+				hitLinesVector[0] = new Point2D.Float(MathUtils.cos(radians + MathUtils.random(-3, 3)),
+						MathUtils.sin(radians + MathUtils.random(-3, 3)));
+				
+				hitLinesVector[1] = new Point2D.Float(MathUtils.cos(radians - MathUtils.random(-3, 3)),
+						MathUtils.sin(radians - MathUtils.random(-3, 3)));
+				
+				hitLinesVector[2] = new Point2D.Float(MathUtils.cos(radians - MathUtils.random(-3, 3)),
+						MathUtils.sin(radians - MathUtils.random(-3, 3)));
+				
+				hitLinesVector[3] = new Point2D.Float(MathUtils.cos(radians + MathUtils.random(-3, 3)),
+						MathUtils.sin(radians + MathUtils.random(-3, 3)));
+				
+				hitLinesVector[4] = new Point2D.Float(MathUtils.cos(radians + MathUtils.random(-3, 3)),
+						MathUtils.sin(radians + MathUtils.random(-3, 3)));
+				
+				hitLinesVector[5] = new Point2D.Float(MathUtils.cos(radians - MathUtils.random(-3, 3)),
+						MathUtils.sin(radians - MathUtils.random(-3, 3)));
+				
+				hitLinesVector[6] = new Point2D.Float(MathUtils.cos(radians - MathUtils.random(-3, 3)),
+						MathUtils.sin(radians - MathUtils.random(-3, 3)));
+				
+				hitLinesVector[7] = new Point2D.Float(MathUtils.cos(radians + MathUtils.random(-3, 3)),
+						MathUtils.sin(radians + MathUtils.random(-3, 3)));
+				
+				hitLinesVector[8] = new Point2D.Float(MathUtils.cos(radians - MathUtils.random(-3, 3)),
+						MathUtils.sin(radians - MathUtils.random(-3, 3)));
+				
+				hitLinesVector[9] = new Point2D.Float(MathUtils.cos(radians + MathUtils.random(-3, 3)),
+						MathUtils.sin(radians + MathUtils.random(-3, 3)));
+				
+			}
 		}
 		
 	}

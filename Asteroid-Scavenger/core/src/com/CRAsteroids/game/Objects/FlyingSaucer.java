@@ -40,6 +40,7 @@ public class FlyingSaucer extends SpaceObject{
 		this.bullets = bullets;
 		
 		speed = 70;
+		
 		if(direction == LEFT){
 			dx = -speed;
 			x = CRAsteroidsGame.WIDTH;
