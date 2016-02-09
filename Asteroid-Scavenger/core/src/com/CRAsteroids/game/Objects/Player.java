@@ -35,6 +35,7 @@ public class Player extends SpaceObject{
 	//Ship properties
 	public int playerWidth;
 	public int playerHealth;
+	public int playerShield;
 	private int fighterWidth;
 	private int fighterHeight;
 	
@@ -68,6 +69,7 @@ public class Player extends SpaceObject{
 		startTime = TimeUtils.nanoTime();
 		
 		playerHealth = 100;
+		playerShield = 100;
 		
 		this.bullets = bullets;
 		
@@ -247,6 +249,10 @@ public class Player extends SpaceObject{
 	
 	public int getPlayerHealth(){
 		return playerHealth;
+	}
+	
+	public int getPlayerShield(){
+		return playerShield;
 	}
 	
 	public int getLives(){

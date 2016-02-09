@@ -60,12 +60,14 @@ public class PlayState extends GameState implements InputProcessor{
 	private Label creditsHud;
 	private Label location;
 	private Label hudHealth;
+	private Label hudShield;
 	private String playerScore;
 	private String playerCredits;
 	private String playerLives;
 	private String playerLocationX;
 	private String playerLocationY;
 	private String playerHealth;
+	private String playerShield;
 	private Table scoreTable;
 	private Table healthTable;
 	private Table creditsTable;
@@ -114,8 +116,6 @@ public class PlayState extends GameState implements InputProcessor{
 
 	@Override
 	public void init() {
-		
-//		enemy = new Enemy();
 		
 		shootTime = TimeUtils.nanoTime();
 		
@@ -177,6 +177,7 @@ public class PlayState extends GameState implements InputProcessor{
 		creditsHud = new Label("Credits: " + player.getPlayerCredit(), scoreStyle);
 		location = new Label("Location: " + "Sector(" + Quad + ")" + player.getx +  " , " + player.gety, scoreStyle);
 		hudHealth = new Label("Armor: " + player.getPlayerHealth(), scoreStyle);
+		hudShield = new Label("Shields: " + player.getPlayerShield(), scoreStyle);
 		
 		//Buttons
 		tbs = new TextButtonStyle();
@@ -211,7 +212,8 @@ public class PlayState extends GameState implements InputProcessor{
 		scoreTable.add(creditsHud).row();
 		scoreTable.add(lives);
 		
-		healthTable.align(Align.topLeft).padTop(Gdx.graphics.getHeight() * .025f);
+		healthTable.align(Align.topLeft).defaults().width(150).padTop(Gdx.graphics.getHeight() * .025f);
+		healthTable.add(hudShield).row();
 		healthTable.add(hudHealth);
 		
 		locationTable.align(Align.bottomRight);
@@ -278,7 +280,7 @@ public class PlayState extends GameState implements InputProcessor{
 		
 		for(int i = 0; i < numToSpawn; i++){
 			float x = MathUtils.random(0, 10000);
-			float y = MathUtils.random(0, 40000);
+			float y = MathUtils.random(0, 20000);
 			
 //			float dx = x - player.getx();
 //			float dy = y - player.gety();
@@ -644,12 +646,19 @@ public class PlayState extends GameState implements InputProcessor{
 		if(player!= null){
 		playerScore = Long.toString(player.getScore());
 		hudScore.setText("Score: " + playerScore);
+		
 		playerHealth = Integer.toString(player.getPlayerHealth());
 		hudHealth.setText("Armor: " + playerHealth);
+		
+		playerShield = Integer.toString(player.getPlayerShield());
+		hudShield.setText("Shield: " + playerShield);
+		
 		playerCredits = Long.toString(player.getPlayerCredit());
 		creditsHud.setText("Credits: " + playerCredits);
+		
 		playerLives = Long.toString(player.getLives());
 		lives.setText("Extra Lives: " + playerLives);
+		
 		playerLocationX = Integer.toString(player.getx);
 		playerLocationY = Integer.toString(player.gety);
 		location.setText("Location: " + "Sector(" + Quad + ")" + playerLocationX +  " , " + playerLocationY);
@@ -657,7 +666,7 @@ public class PlayState extends GameState implements InputProcessor{
 	}
 	
 	public void Quadrants(){
-		if(player.getx() < 5000 && player.gety() < 5000){
+		if(player.getx() < quadInterval && player.gety() < quadInterval){
 			Quad = "1";
 		}else if(player.getx() > quadInterval * 1 && player.gety() < quadInterval * 1){
 			Quad = "2";
@@ -673,6 +682,8 @@ public class PlayState extends GameState implements InputProcessor{
 			Quad = "7";
 		}else if(player.getx() < quadInterval * 1 && player.gety() > quadInterval * 3 && player.gety() < quadInterval * 4){
 			Quad = "8";
+		}else{
+			Quad = "The Unknown";
 		}
 	}
 	
@@ -680,7 +691,7 @@ public class PlayState extends GameState implements InputProcessor{
 		int numberOfStars = 10000;
 		
 		for(int i = 0; i < numberOfStars; i++){
-			stars.add(new Stars(MathUtils.random(0, 10000), MathUtils.random(0, 40000)));
+			stars.add(new Stars(MathUtils.random(0, 10000), MathUtils.random(0, 20000)));
 		}
 	}
 
