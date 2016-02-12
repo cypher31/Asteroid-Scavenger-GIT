@@ -55,6 +55,12 @@ public class Player extends SpaceObject{
 	
 	public long score;
 	public long playerCredit;
+	public int mineLevel;
+	public int fightLevel;
+	public long playerMineXP;
+	public long playerFightXP;
+	public long xpToLevelMine;
+	public long xpToLevelFight;
 	private int extraLives;
 	private long requiredScore;
 	public int getx;
@@ -70,6 +76,14 @@ public class Player extends SpaceObject{
 		
 		playerHealth = 100;
 		playerShield = 100;
+		
+		xpToLevelMine = 1000;
+		xpToLevelFight = 1000;
+		
+		mineLevel = 1;
+		fightLevel = 1;
+		playerMineXP = 0;
+		playerFightXP = 0;
 		
 		this.bullets = bullets;
 		
@@ -236,6 +250,8 @@ public class Player extends SpaceObject{
 		x = CRAsteroidsGame.WIDTH / 2;
 		y = CRAsteroidsGame.HEIGHT / 2;
 		setShape();
+		playerShield = 100;
+		playerHealth = 100;
 		hit = dead = false;
 	}
 	
@@ -245,6 +261,34 @@ public class Player extends SpaceObject{
 	
 	public long getPlayerCredit(){
 		return playerCredit;
+	}
+	
+	public long getPlayerMineXP(){
+		return playerMineXP;
+	}
+	
+	public int getMineLevel(){
+		return mineLevel;
+	}
+	
+	public long getPlayerFightXP(){
+		return playerFightXP;
+	}
+	
+	public int getFightLevel(){
+		return fightLevel;
+	}
+	
+	public void levelUp(){
+		if(playerMineXP > xpToLevelMine){
+			incrementMineLevel();
+			xpToLevelMine = (xpToLevelMine * mineLevel) + xpToLevelMine * 2;
+		}
+		
+		if(playerFightXP > xpToLevelFight){
+			incrementMineLevel();
+			xpToLevelFight = (xpToLevelFight * fightLevel) + xpToLevelFight * 2;
+		}
 	}
 	
 	public int getPlayerHealth(){
@@ -265,6 +309,22 @@ public class Player extends SpaceObject{
 	
 	public void incrementScore(long l){
 		score += l;
+	}
+	
+	public void incrementMineXP(long l){
+		playerMineXP += l;
+	}
+	
+	public void incrementFightXP(long l){
+		playerFightXP += l;
+	}
+	
+	public void incrementMineLevel(){
+		mineLevel += 1;
+	}
+	
+	public void incrementFightLevel(){
+		fightLevel += 1;
 	}
 	
 	public void incrementCredits(long l){
@@ -377,6 +437,8 @@ public class Player extends SpaceObject{
 			}
 			return;
 		}
+		
+		levelUp();
 		
 		//check extra lives
 		if(score >= requiredScore){

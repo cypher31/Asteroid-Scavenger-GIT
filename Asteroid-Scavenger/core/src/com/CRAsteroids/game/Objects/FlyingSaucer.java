@@ -16,7 +16,7 @@ public class FlyingSaucer extends SpaceObject{
 	public static final int LARGE = 0;
 	public static final int SMALL = 1;
 	
-	private int score;
+	private int xp;
 	
 	private float fireTimer;
 	private float fireTime;
@@ -56,11 +56,11 @@ public class FlyingSaucer extends SpaceObject{
 		setShape();
 		
 		if(type == LARGE){
-			score = 200;
+			xp = 50;
 //			Jukebox.loop("largesaucer");
 		}
 		else if(type == SMALL){
-			score = 1000;
+			xp = 100;
 //			Jukebox.loop("smallsaucer");
 		}
 		
@@ -114,8 +114,8 @@ public class FlyingSaucer extends SpaceObject{
 		}
 	}
 	
-	public int getScore(){
-		return score;
+	public int getxp(){
+		return xp;
 	}
 	
 	public boolean shouldRemove(){

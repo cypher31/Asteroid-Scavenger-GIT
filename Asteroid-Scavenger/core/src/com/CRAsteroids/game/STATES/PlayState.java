@@ -57,12 +57,16 @@ public class PlayState extends GameState implements InputProcessor{
 	private LabelStyle scoreStyle;
 	private LabelStyle buttonStyle;
 	private Label hudScore;
+	private Label hudMineXP;
+	private Label hudFightXP;
 	private Label lives;
 	private Label creditsHud;
 	private Label location;
 	private Label hudHealth;
 	private Label hudShield;
 	private String playerScore;
+	private String playerMineXP;
+	private String playerFightXP;
 	private String playerCredits;
 	private String playerLives;
 	private String playerLocationX;
@@ -174,8 +178,8 @@ public class PlayState extends GameState implements InputProcessor{
 		scoreStyle = CRAsteroidsGame.hudStyle;
 		buttonStyle = CRAsteroidsGame.mediumStyle;
 		
-		hudScore = new Label("Score: 0", scoreStyle);
-		lives = new Label("Extra Lives: " + player.getLives(), scoreStyle);
+		hudMineXP = new Label("Mining XP: 0", scoreStyle);
+		hudFightXP = new Label("Fighting XP: 0", scoreStyle);
 		creditsHud = new Label("Credits: " + player.getPlayerCredit(), scoreStyle);
 		location = new Label("Location: " + "Sector(" + Quad + ")" + player.getx +  " , " + player.gety, scoreStyle);
 		hudHealth = new Label("Armor: " + player.getPlayerHealth(), scoreStyle);
@@ -189,6 +193,7 @@ public class PlayState extends GameState implements InputProcessor{
 		scoreTable = new Table();
 		healthTable = new Table();
 		locationTable = new Table();
+		//android
 		buttonTableLeft = new Table();
 		buttonTableRight = new Table();
 		turnLeftAndroid = new TextButton("LEFT ", tbs);
@@ -210,9 +215,9 @@ public class PlayState extends GameState implements InputProcessor{
 		playerHud.addActor(buttonTableRight);
 		
 		scoreTable.align(Align.top);
-		scoreTable.add(hudScore).padTop(Gdx.graphics.getHeight() * .025f).row();
+		scoreTable.add(hudMineXP).padTop(Gdx.graphics.getHeight() * .025f).row();
+		scoreTable.add(hudFightXP).row();
 		scoreTable.add(creditsHud).row();
-		scoreTable.add(lives);
 		
 		healthTable.align(Align.topLeft).defaults().width(150).padTop(Gdx.graphics.getHeight() * .025f);
 		healthTable.add(hudShield).getActor().setAlignment(Align.right);
@@ -476,7 +481,7 @@ public class PlayState extends GameState implements InputProcessor{
 					asteroids.remove(j);
 					j--;
 					splitAsteroid(a);
-					player.incrementScore(a.getScore());
+					player.incrementMineXP(a.getxp());
 	//				Jukebox.play("explode");
 					if(a.getType() == 2){
 						System.out.println(a.getType());
@@ -541,7 +546,7 @@ public class PlayState extends GameState implements InputProcessor{
 					bullets.remove(i);
 					i--;
 					createParticles(flyingSaucer.getx(), flyingSaucer.gety());
-					player.incrementScore(flyingSaucer.getScore());
+					player.incrementFightXP(flyingSaucer.getxp());
 					flyingSaucer = null;
 //					Jukebox.stop("smallsaucer");
 //					Jukebox.stop("largesaucer");
@@ -671,8 +676,11 @@ public class PlayState extends GameState implements InputProcessor{
 		
 		//draw hud
 		if(player!= null){
-		playerScore = Long.toString(player.getScore());
-		hudScore.setText("Score: " + playerScore);
+		playerMineXP = Long.toString(player.getPlayerMineXP());
+		hudMineXP.setText("Mining XP: " + playerMineXP);
+		
+		playerFightXP = Long.toString(player.getPlayerFightXP());
+		hudFightXP.setText("Fighting XP: " + playerFightXP);
 		
 		if(player.getPlayerHealth() < 0){
 			player.playerHealth = 0;
@@ -689,9 +697,6 @@ public class PlayState extends GameState implements InputProcessor{
 		
 		playerCredits = Long.toString(player.getPlayerCredit());
 		creditsHud.setText("Credits: " + playerCredits);
-		
-		playerLives = Long.toString(player.getLives());
-		lives.setText("Extra Lives: " + playerLives);
 		
 		playerLocationX = Integer.toString(player.getx);
 		playerLocationY = Integer.toString(player.gety);
