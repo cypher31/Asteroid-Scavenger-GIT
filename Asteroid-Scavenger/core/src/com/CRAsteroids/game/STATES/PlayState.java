@@ -15,14 +15,19 @@ import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -35,7 +40,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
-public class PlayState extends GameState implements InputProcessor{
+public class PlayState<Radar> extends GameState implements InputProcessor{
 	
 	private SpriteBatch sb;
 	private ShapeRenderer sr;
@@ -53,29 +58,24 @@ public class PlayState extends GameState implements InputProcessor{
 	
 	//Hud
 	private FitViewport playViewPort;
-	private Stage playerHud;
+	public static Stage playerHud;
 	private LabelStyle scoreStyle;
 	private LabelStyle buttonStyle;
-	private Label hudScore;
 	private Label hudMineXP;
 	private Label hudFightXP;
-	private Label lives;
 	private Label creditsHud;
 	private Label location;
 	private Label hudHealth;
 	private Label hudShield;
-	private String playerScore;
 	private String playerMineXP;
 	private String playerFightXP;
 	private String playerCredits;
-	private String playerLives;
 	private String playerLocationX;
 	private String playerLocationY;
 	private String playerHealth;
 	private String playerShield;
 	private Table scoreTable;
 	private Table healthTable;
-	private Table creditsTable;
 	private Table locationTable;
 	private Table buttonTableLeft;
 	private Table buttonTableRight;
@@ -87,9 +87,9 @@ public class PlayState extends GameState implements InputProcessor{
 	private TextButton thrustOffAndroid;
 	
 	private BitmapFont font;
-	private Player hudPlayer;
 	
 	public Player player;
+	private Actor radar;
 	private ArrayList<Bullet> bullets;
 	private ArrayList<Asteroid> asteroids;
 	private ArrayList<Bullet> enemyBullets;
@@ -102,7 +102,6 @@ public class PlayState extends GameState implements InputProcessor{
 	
 	private ArrayList<Particle> particles;
 	
-	private int level;
 	private int totalAsteroids;
 	private int numAsteroidsLeft;
 	
@@ -138,6 +137,7 @@ public class PlayState extends GameState implements InputProcessor{
 		
 		player = new Player(bullets);
 		
+		
 		asteroids = new ArrayList<Asteroid>();
 		
 		particles = new ArrayList<Particle>();
@@ -148,10 +148,7 @@ public class PlayState extends GameState implements InputProcessor{
 		
 		createStars();
 		
-		level = 1;
 		spawnAsteroids();
-		
-		hudPlayer = new Player(null);
 		
 		fsTimer = 0;
 		fsTime = 15;
@@ -174,6 +171,28 @@ public class PlayState extends GameState implements InputProcessor{
 		playViewPort = new FitViewport(CRAsteroidsGame.WIDTH, CRAsteroidsGame.HEIGHT);
 		playerHud = new Stage(playViewPort);
 		
+		
+		class Radar extends Actor {
+
+		    @Override
+		    public void draw (Batch batch, float parentAlpha) {
+				batch.end();
+		    	
+				ShapeRenderer shapeRenderer = new ShapeRenderer();
+				
+				shapeRenderer.setProjectionMatrix(playerHud.getCamera().combined);
+				
+				shapeRenderer.begin(ShapeType.Filled);
+				
+				int radius = 100;
+				
+				shapeRenderer.circle(playViewPort.getWorldWidth() - radius * 1.5f, playViewPort.getWorldHeight() - radius * 1.5f, radius);
+				
+				shapeRenderer.end();
+				
+				batch.begin();
+		    }
+		}
 		
 		scoreStyle = CRAsteroidsGame.hudStyle;
 		buttonStyle = CRAsteroidsGame.mediumStyle;
@@ -208,11 +227,14 @@ public class PlayState extends GameState implements InputProcessor{
 		buttonTableLeft.setFillParent(true);
 		buttonTableRight.setFillParent(true);
 		
+		radar = new Radar();
+		
 		playerHud.addActor(scoreTable);
 		playerHud.addActor(healthTable);
 		playerHud.addActor(locationTable);
 		playerHud.addActor(buttonTableLeft);
 		playerHud.addActor(buttonTableRight);
+		playerHud.addActor(radar);
 		
 		scoreTable.align(Align.top);
 		scoreTable.add(hudMineXP).padTop(Gdx.graphics.getHeight() * .025f).row();
@@ -330,12 +352,8 @@ public class PlayState extends GameState implements InputProcessor{
 			cam.update();
 		}
 		
-		//next level
-		if(asteroids.size() == 0){
-			level++;
-			spawnAsteroids();
-		}
-		
+		//update radar
+		radar.setPosition(player.getx(), player.gety());
 		
 		//update credits
 		for(int i = 0; i < credits.size(); i++)
@@ -460,7 +478,6 @@ public class PlayState extends GameState implements InputProcessor{
 						player.playerHealth -= crashDamage;
 						hitTime = System.nanoTime();
 					}
-					System.out.println((player.playerShield));
 					asteroids.remove(i);
 					i--;
 					splitAsteroid(a);
@@ -484,16 +501,13 @@ public class PlayState extends GameState implements InputProcessor{
 					player.incrementMineXP(a.getxp());
 	//				Jukebox.play("explode");
 					if(a.getType() == 2){
-						System.out.println(a.getType());
 						credits.add(new Credits(a.getx(), a.gety()));
 					}
 					if(a.getType() == 1){
-						System.out.println(a.getType());
 						credits.add(new Credits(a.getx(), a.gety()));
 						credits.add(new Credits(a.getx(), a.gety()));
 					}
 					if(a.getType() == 0){
-						System.out.println(a.getType());
 						credits.add(new Credits(a.getx(), a.gety()));
 						credits.add(new Credits(a.getx(), a.gety()));
 						credits.add(new Credits(a.getx(), a.gety()));
@@ -511,7 +525,6 @@ public class PlayState extends GameState implements InputProcessor{
 					credits.remove(i);
 					i--;
 					player.incrementCredits(c.creditWorth());
-					System.out.println(player.getPlayerCredit());
 				}
 				
 			}
@@ -572,7 +585,6 @@ public class PlayState extends GameState implements InputProcessor{
 						player.playerHealth -= bulletDamage;
 						hitTime = System.nanoTime();
 					}
-					System.out.println(player.playerHealth);
 //					Jukebox.play("explode");
 					break;
 				}
@@ -645,7 +657,6 @@ public class PlayState extends GameState implements InputProcessor{
 		//draw player
 		player.draw(sr);
 
-		
 		//draw bullets
 		for(int i = 0; i < bullets.size(); i++){
 			bullets.get(i).draw(sr);

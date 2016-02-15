@@ -77,8 +77,8 @@ public class Player extends SpaceObject{
 		playerHealth = 100;
 		playerShield = 100;
 		
-		xpToLevelMine = 1000;
-		xpToLevelFight = 1000;
+		xpToLevelMine = 100;
+		xpToLevelFight = 100;
 		
 		mineLevel = 1;
 		fightLevel = 1;
