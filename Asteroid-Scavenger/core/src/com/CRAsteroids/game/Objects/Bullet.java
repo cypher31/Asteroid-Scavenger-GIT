@@ -16,7 +16,7 @@ public class Bullet extends SpaceObject{
 	
 	public Bullet(float x, float y, float radians){
 		
-		if(PlayState.currentWeapon == Weapons.BULLET){
+		if(PlayState.player.currentWeapon == Weapons.BULLET){
 			this.x = x;
 			this.y = y;
 			this.radians = radians;
@@ -33,7 +33,7 @@ public class Bullet extends SpaceObject{
 			lifeTime = 1;
 		}
 		
-		if(PlayState.currentWeapon == Weapons.SPREADBULLET){
+		if(PlayState.player.currentWeapon == Weapons.SPREADBULLET){
 			this.x = x;
 			this.y = y;
 			this.radians = radians;
@@ -50,12 +50,12 @@ public class Bullet extends SpaceObject{
 			lifeTime = 1;
 		}
 		
-		if(PlayState.currentWeapon == Weapons.LASER){
+		if(PlayState.player.currentWeapon == Weapons.LASER){
 			this.x = x;
 			this.y = y;
 			this.radians = radians;
 			
-			bulletDamage = 7;
+			bulletDamage = 3;
 			
 			float speed = 750;
 			dx = MathUtils.cos(radians) * speed;
@@ -63,6 +63,24 @@ public class Bullet extends SpaceObject{
 			
 			width = 20;
 			height = 2;
+			
+			lifeTimer = 0;
+			lifeTime = 1;
+		}
+		
+		if(PlayState.player.currentWeapon == Weapons.TRILASER){
+			this.x = x;
+			this.y = y;
+			this.radians = radians;
+			
+			bulletDamage = 2;
+			
+			float speed = 500;
+			dx = MathUtils.cos(radians) * speed;
+			dy = MathUtils.sin(radians) * speed;
+			
+			width = 15;
+			height = 1;
 			
 			lifeTimer = 0;
 			lifeTime = 1;
@@ -86,14 +104,15 @@ public class Bullet extends SpaceObject{
 	}
 	
 	public void draw(ShapeRenderer sr){
-		if(PlayState.currentWeapon == Weapons.BULLET || PlayState.currentWeapon == Weapons.SPREADBULLET){
+		//player weapons
+		if(PlayState.player.currentWeapon == Weapons.BULLET || PlayState.player.currentWeapon == Weapons.SPREADBULLET){
 			sr.setColor(0.3f, 1.0f, 0.3f, 1.0f);
 			sr.begin(ShapeType.Filled);
 			sr.circle(x, y, width / 2);
 			sr.end();
 		}
 		
-		if(PlayState.currentWeapon == Weapons.LASER || PlayState.currentWeapon == Weapons.SPREADBULLET){
+		if(PlayState.player.currentWeapon == Weapons.LASER || PlayState.player.currentWeapon == Weapons.TRILASER){
 			sr.setColor(0.3f, 1.0f, 0.3f, 1.0f);
 			sr.begin(ShapeType.Line);
 			sr.rect(x, y, 0, 0, width, height, 1, 1, MathUtils.radiansToDegrees * radians + 180);

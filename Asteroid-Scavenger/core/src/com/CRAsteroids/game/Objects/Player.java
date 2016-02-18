@@ -36,7 +36,7 @@ public class Player extends SpaceObject{
 	public int playerWidth;
 	public int playerHealth;
 	public int playerShield;
-	public Weapons weapon;
+	public Weapons currentWeapon;
 	private int fighterWidth;
 	private int fighterHeight;
 	
@@ -145,7 +145,7 @@ public class Player extends SpaceObject{
 	}
 	
 	public enum Weapons{
-		BULLET, SPREADBULLET, LASER,
+		BULLET, SPREADBULLET, LASER, TRILASER, ARCLASER, MISSLE, BIGDADDY, MULTITARGET
 	}
 	
 	private void setShape(){
@@ -343,22 +343,28 @@ public class Player extends SpaceObject{
 		System.out.println(bullets.size());
 		if(bullets.size() >= MAX_BULLETS) return;
 			if(fighterShip == true){
-				if(PlayState.currentWeapon == Weapons.BULLET){
+				if(currentWeapon == Weapons.BULLET){
 					if(bullets.size() == MAX_BULLETS) return;
 					bullets.add(new Bullet(x, y, radians));
 			//		Jukebox.play("shoot");
 				}
 				
-				if(PlayState.currentWeapon == Weapons.SPREADBULLET){
+				if(currentWeapon == Weapons.SPREADBULLET){
 					bullets.add(new Bullet(x, y, radians));
 					bullets.add(new Bullet(x, y, radians + 3.1415f / 16));
 					bullets.add(new Bullet(x, y, radians - 3.1415f / 16));
 			//		Jukebox.play("shoot");
 				}
 				
-				if(PlayState.currentWeapon == Weapons.LASER){
-					if(bullets.size() == MAX_BULLETS) return;
+				if(currentWeapon == Weapons.LASER){
 					bullets.add(new Bullet(x, y , radians));
+			//		Jukebox.play("shoot");
+				}
+				
+				if(currentWeapon == Weapons.TRILASER){
+					bullets.add(new Bullet(x, y, radians));
+					bullets.add(new Bullet(x + 12 * MathUtils.sin(radians), y - 12 * MathUtils.cos(radians), radians));
+					bullets.add(new Bullet(x - 12 * MathUtils.sin(radians), y + 12 * MathUtils.cos(radians), radians));
 			//		Jukebox.play("shoot");
 				}
 		}
@@ -444,6 +450,7 @@ public class Player extends SpaceObject{
 	}
 	
 	public void update(float dt){
+		System.out.println(radians);
 		if(hit){
 			hitTimer += dt;
 			if(hitTimer > hitTime){

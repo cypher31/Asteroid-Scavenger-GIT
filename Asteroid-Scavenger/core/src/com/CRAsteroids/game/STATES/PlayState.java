@@ -89,8 +89,7 @@ public class PlayState extends GameState implements InputProcessor{
 	
 	private BitmapFont font;
 	
-	public Player player;
-	public static Weapons currentWeapon;
+	public static Player player;
 	private Actor radar;
 	private Actor radarAsteroid;
 	private ArrayList<Bullet> bullets;
@@ -140,7 +139,7 @@ public class PlayState extends GameState implements InputProcessor{
 		
 		player = new Player(bullets);
 		
-		currentWeapon = Weapons.LASER;
+		player.currentWeapon = Weapons.TRILASER;
 		
 		asteroids = new ArrayList<Asteroid>();
 		
