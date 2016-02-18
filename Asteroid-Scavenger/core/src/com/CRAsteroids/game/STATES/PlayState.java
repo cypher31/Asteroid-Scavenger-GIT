@@ -11,6 +11,7 @@ import com.CRAsteroids.game.Objects.FlyingSaucer;
 import com.CRAsteroids.game.Objects.Particle;
 import com.CRAsteroids.game.Objects.Player;
 import com.CRAsteroids.game.Objects.Stars;
+import com.CRAsteroids.game.Objects.Player.Weapons;
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -40,7 +41,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
-public class PlayState<Radar> extends GameState implements InputProcessor{
+public class PlayState extends GameState implements InputProcessor{
 	
 	private SpriteBatch sb;
 	private ShapeRenderer sr;
@@ -89,7 +90,9 @@ public class PlayState<Radar> extends GameState implements InputProcessor{
 	private BitmapFont font;
 	
 	public Player player;
+	public static Weapons currentWeapon;
 	private Actor radar;
+	private Actor radarAsteroid;
 	private ArrayList<Bullet> bullets;
 	private ArrayList<Asteroid> asteroids;
 	private ArrayList<Bullet> enemyBullets;
@@ -137,6 +140,7 @@ public class PlayState<Radar> extends GameState implements InputProcessor{
 		
 		player = new Player(bullets);
 		
+		currentWeapon = Weapons.LASER;
 		
 		asteroids = new ArrayList<Asteroid>();
 		
@@ -171,29 +175,6 @@ public class PlayState<Radar> extends GameState implements InputProcessor{
 		playViewPort = new FitViewport(CRAsteroidsGame.WIDTH, CRAsteroidsGame.HEIGHT);
 		playerHud = new Stage(playViewPort);
 		
-		
-		class Radar extends Actor {
-
-		    @Override
-		    public void draw (Batch batch, float parentAlpha) {
-				batch.end();
-		    	
-				ShapeRenderer shapeRenderer = new ShapeRenderer();
-				
-				shapeRenderer.setProjectionMatrix(playerHud.getCamera().combined);
-				
-				shapeRenderer.begin(ShapeType.Filled);
-				
-				int radius = 100;
-				
-				shapeRenderer.circle(playViewPort.getWorldWidth() - radius * 1.5f, playViewPort.getWorldHeight() - radius * 1.5f, radius);
-				
-				shapeRenderer.end();
-				
-				batch.begin();
-		    }
-		}
-		
 		scoreStyle = CRAsteroidsGame.hudStyle;
 		buttonStyle = CRAsteroidsGame.mediumStyle;
 		
@@ -227,14 +208,11 @@ public class PlayState<Radar> extends GameState implements InputProcessor{
 		buttonTableLeft.setFillParent(true);
 		buttonTableRight.setFillParent(true);
 		
-		radar = new Radar();
-		
 		playerHud.addActor(scoreTable);
 		playerHud.addActor(healthTable);
 		playerHud.addActor(locationTable);
 		playerHud.addActor(buttonTableLeft);
 		playerHud.addActor(buttonTableRight);
-		playerHud.addActor(radar);
 		
 		scoreTable.align(Align.top);
 		scoreTable.add(hudMineXP).padTop(Gdx.graphics.getHeight() * .025f).row();
@@ -351,9 +329,6 @@ public class PlayState<Radar> extends GameState implements InputProcessor{
 			cam.position.set(player.getx(), player.gety(), 0);
 			cam.update();
 		}
-		
-		//update radar
-		radar.setPosition(player.getx(), player.gety());
 		
 		//update credits
 		for(int i = 0; i < credits.size(); i++)

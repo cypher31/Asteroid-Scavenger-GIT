@@ -1,5 +1,7 @@
 package com.CRAsteroids.game.Objects;
 
+import com.CRAsteroids.game.Objects.Player.Weapons;
+import com.CRAsteroids.game.STATES.PlayState;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.MathUtils;
@@ -14,20 +16,57 @@ public class Bullet extends SpaceObject{
 	
 	public Bullet(float x, float y, float radians){
 		
-		this.x = x;
-		this.y = y;
-		this.radians = radians;
+		if(PlayState.currentWeapon == Weapons.BULLET){
+			this.x = x;
+			this.y = y;
+			this.radians = radians;
+			
+			bulletDamage = 5;
+			
+			float speed = 350;
+			dx = MathUtils.cos(radians) * speed;
+			dy = MathUtils.sin(radians) * speed;
+			
+			width = height = 2;
+			
+			lifeTimer = 0;
+			lifeTime = 1;
+		}
 		
-		bulletDamage = 5;
+		if(PlayState.currentWeapon == Weapons.SPREADBULLET){
+			this.x = x;
+			this.y = y;
+			this.radians = radians;
+			
+			bulletDamage = 3;
+			
+			float speed = 350;
+			dx = MathUtils.cos(radians) * speed;
+			dy = MathUtils.sin(radians) * speed;
+			
+			width = height = 2;
+			
+			lifeTimer = 0;
+			lifeTime = 1;
+		}
 		
-		float speed = 350;
-		dx = MathUtils.cos(radians) * speed;
-		dy = MathUtils.sin(radians) * speed;
-		
-		width = height = 2;
-		
-		lifeTimer = 0;
-		lifeTime = 1;
+		if(PlayState.currentWeapon == Weapons.LASER){
+			this.x = x;
+			this.y = y;
+			this.radians = radians;
+			
+			bulletDamage = 7;
+			
+			float speed = 750;
+			dx = MathUtils.cos(radians) * speed;
+			dy = MathUtils.sin(radians) * speed;
+			
+			width = 20;
+			height = 2;
+			
+			lifeTimer = 0;
+			lifeTime = 1;
+		}
 		
 	}
 	
@@ -47,9 +86,18 @@ public class Bullet extends SpaceObject{
 	}
 	
 	public void draw(ShapeRenderer sr){
-		sr.setColor(0.3f, 1.0f, 0.3f, 1.0f);
-		sr.begin(ShapeType.Filled);
-		sr.circle(x - width / 2, y - height / 2, width / 2);
-		sr.end();
+		if(PlayState.currentWeapon == Weapons.BULLET || PlayState.currentWeapon == Weapons.SPREADBULLET){
+			sr.setColor(0.3f, 1.0f, 0.3f, 1.0f);
+			sr.begin(ShapeType.Filled);
+			sr.circle(x, y, width / 2);
+			sr.end();
+		}
+		
+		if(PlayState.currentWeapon == Weapons.LASER || PlayState.currentWeapon == Weapons.SPREADBULLET){
+			sr.setColor(0.3f, 1.0f, 0.3f, 1.0f);
+			sr.begin(ShapeType.Line);
+			sr.rect(x, y, 0, 0, width, height, 1, 1, MathUtils.radiansToDegrees * radians + 180);
+			sr.end();
+		}
 	}
 }

@@ -36,8 +36,12 @@ public class Player extends SpaceObject{
 	public int playerWidth;
 	public int playerHealth;
 	public int playerShield;
+	public Weapons weapon;
 	private int fighterWidth;
 	private int fighterHeight;
+	
+	//weapon variabls
+	private float helixRadians;
 	
 	public int freighterWidth;
 	public int freighterHeight;
@@ -138,6 +142,10 @@ public class Player extends SpaceObject{
 		playerCredit = 0;
 		extraLives = 3;
 		requiredScore = 10000;
+	}
+	
+	public enum Weapons{
+		BULLET, SPREADBULLET, LASER,
 	}
 	
 	private void setShape(){
@@ -332,17 +340,32 @@ public class Player extends SpaceObject{
 	}
 	
 	public void shoot(){
-		if(bullets.size() == MAX_BULLETS) return;
-		if(fighterShip == true){
-		bullets.add(new Bullet(x, y, radians));
-//		Jukebox.play("shoot");
+		System.out.println(bullets.size());
+		if(bullets.size() >= MAX_BULLETS) return;
+			if(fighterShip == true){
+				if(PlayState.currentWeapon == Weapons.BULLET){
+					if(bullets.size() == MAX_BULLETS) return;
+					bullets.add(new Bullet(x, y, radians));
+			//		Jukebox.play("shoot");
+				}
+				
+				if(PlayState.currentWeapon == Weapons.SPREADBULLET){
+					bullets.add(new Bullet(x, y, radians));
+					bullets.add(new Bullet(x, y, radians + 3.1415f / 16));
+					bullets.add(new Bullet(x, y, radians - 3.1415f / 16));
+			//		Jukebox.play("shoot");
+				}
+				
+				if(PlayState.currentWeapon == Weapons.LASER){
+					if(bullets.size() == MAX_BULLETS) return;
+					bullets.add(new Bullet(x, y , radians));
+			//		Jukebox.play("shoot");
+				}
 		}
-		
-		if(bullets.size() == MAX_BULLETS && freighterShip == true) return;
-		if(freighterShip == true){
-		bullets.add(new Bullet(shapex[2], shapey[2], radians - 3.1415f / 2));
-		bullets.add(new Bullet(shapex[8], shapey[8], radians + 3.1415f / 2));
-//		Jukebox.play("shoot");
+			if(freighterShip == true){
+				bullets.add(new Bullet(shapex[2], shapey[2], radians - 3.1415f / 2));
+				bullets.add(new Bullet(shapex[8], shapey[8], radians + 3.1415f / 2));
+		//		Jukebox.play("shoot");
 		}
 	}
 	
@@ -439,13 +462,6 @@ public class Player extends SpaceObject{
 		}
 		
 		levelUp();
-		
-		//check extra lives
-		if(score >= requiredScore){
-			extraLives++;
-			requiredScore += 10000;
-//			Jukebox.play("extralife");
-		}
 		
 		//turning
 		if(left){
