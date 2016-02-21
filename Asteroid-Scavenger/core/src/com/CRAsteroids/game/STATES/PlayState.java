@@ -139,7 +139,7 @@ public class PlayState extends GameState implements InputProcessor{
 		
 		player = new Player(bullets);
 		
-		player.currentWeapon = Weapons.TRILASER;
+		player.currentWeapon = Weapons.BOMB;
 		
 		asteroids = new ArrayList<Asteroid>();
 		
@@ -473,6 +473,10 @@ public class PlayState extends GameState implements InputProcessor{
 					j--;
 					splitAsteroid(a);
 					player.incrementMineXP(a.getxp());
+					if(asteroids.size() < 10000){
+						asteroids.add(new Asteroid(a.getx() + MathUtils.random(1700, 2000), a.gety() + MathUtils.random(900, 1200), Asteroid.LARGE));
+						asteroids.add(new Asteroid(a.getx() + MathUtils.random(0, 1700) - 3400, a.gety() + MathUtils.random(0, 900) - 1800, Asteroid.LARGE));
+					}
 	//				Jukebox.play("explode");
 					if(a.getType() == 2){
 						credits.add(new Credits(a.getx(), a.gety()));
@@ -749,18 +753,24 @@ public class PlayState extends GameState implements InputProcessor{
 			if(!player.isHit())
 				player.setLeft(true);
 		}
-		if(k == Keys.DOWN) {
-			GameKeys.setKey(GameKeys.DOWN, true);
-		}
 		if(k == Keys.RIGHT) {
 			if(!player.isHit())
 				player.setRight(true);
 		}
-		if(k == Keys.ENTER) {
-			GameKeys.setKey(GameKeys.ENTER, true);
-		}
 		if(k == Keys.ESCAPE) {
-			GameKeys.setKey(GameKeys.ESCAPE, true);
+			gsm.setState(GameStateManager.MENU);
+		}
+		if(k == Keys.NUM_1) {
+			player.currentWeapon = Weapons.BOMB;
+		}
+		if(k == Keys.NUM_2) {
+			player.currentWeapon = Weapons.SPREADBOMB;
+		}
+		if(k == Keys.NUM_3) {
+			player.currentWeapon = Weapons.LASER;
+		}
+		if(k == Keys.NUM_4) {
+			player.currentWeapon = Weapons.TRILASER;
 		}
 		if(k == Keys.SPACE) {
 			if(!player.isHit())
@@ -781,16 +791,13 @@ public class PlayState extends GameState implements InputProcessor{
 			player.setLeft(false);
 		}
 		if(k == Keys.DOWN) {
-			GameKeys.setKey(GameKeys.DOWN, false);
 		}
 		if(k == Keys.RIGHT) {
 			player.setRight(false);
 		}
 		if(k == Keys.ENTER) {
-			GameKeys.setKey(GameKeys.ENTER, false);
 		}
 		if(k == Keys.ESCAPE) {
-			GameKeys.setKey(GameKeys.ESCAPE, false);
 		}
 		if(k == Keys.SPACE) {
 		}

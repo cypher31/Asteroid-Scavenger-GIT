@@ -40,9 +40,6 @@ public class Player extends SpaceObject{
 	private int fighterWidth;
 	private int fighterHeight;
 	
-	//weapon variabls
-	private float helixRadians;
-	
 	public int freighterWidth;
 	public int freighterHeight;
 	public int freighterCenterWidth;
@@ -145,7 +142,7 @@ public class Player extends SpaceObject{
 	}
 	
 	public enum Weapons{
-		BULLET, SPREADBULLET, LASER, TRILASER, ARCLASER, MISSLE, BIGDADDY, MULTITARGET
+		BOMB, SPREADBOMB, LASER, TRILASER
 	}
 	
 	private void setShape(){
@@ -340,16 +337,15 @@ public class Player extends SpaceObject{
 	}
 	
 	public void shoot(){
-		System.out.println(bullets.size());
 		if(bullets.size() >= MAX_BULLETS) return;
 			if(fighterShip == true){
-				if(currentWeapon == Weapons.BULLET){
+				if(currentWeapon == Weapons.BOMB){
 					if(bullets.size() == MAX_BULLETS) return;
 					bullets.add(new Bullet(x, y, radians));
 			//		Jukebox.play("shoot");
 				}
 				
-				if(currentWeapon == Weapons.SPREADBULLET){
+				if(currentWeapon == Weapons.SPREADBOMB){
 					bullets.add(new Bullet(x, y, radians));
 					bullets.add(new Bullet(x, y, radians + 3.1415f / 16));
 					bullets.add(new Bullet(x, y, radians - 3.1415f / 16));
@@ -367,6 +363,7 @@ public class Player extends SpaceObject{
 					bullets.add(new Bullet(x - 12 * MathUtils.sin(radians), y + 12 * MathUtils.cos(radians), radians));
 			//		Jukebox.play("shoot");
 				}
+				
 		}
 			if(freighterShip == true){
 				bullets.add(new Bullet(shapex[2], shapey[2], radians - 3.1415f / 2));
@@ -450,7 +447,6 @@ public class Player extends SpaceObject{
 	}
 	
 	public void update(float dt){
-		System.out.println(radians);
 		if(hit){
 			hitTimer += dt;
 			if(hitTimer > hitTime){

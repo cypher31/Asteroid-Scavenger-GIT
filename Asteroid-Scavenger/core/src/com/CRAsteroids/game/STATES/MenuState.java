@@ -88,7 +88,6 @@ public class MenuState extends GameState{
 		textButtonStyle.font = optionStyle;
 		
 		playButton = new TextButton(play, textButtonStyle);
-		highScoreButton = new TextButton(highScore, textButtonStyle);
 		quitButton = new TextButton(quit, textButtonStyle);
 		
 		//add actors
@@ -108,11 +107,9 @@ public class MenuState extends GameState{
 		//buttons
 		optionsTable.defaults().space(50);
 		optionsTable.add(playButton).align(Align.center).row();
-		optionsTable.add(highScoreButton).align(Align.center).row();
 		optionsTable.add(quitButton).align(Align.center).row();
 		
 		playButton.setTouchable(Touchable.enabled);
-		highScoreButton.setTouchable(Touchable.enabled);
 		quitButton.setTouchable(Touchable.enabled);
 		
 		//Debug
@@ -182,24 +179,6 @@ public class MenuState extends GameState{
 		@Override
 		public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
 			gsm.setState(GameStateManager.ChooseShipState);
-			return true;
-		}
-		
-		});
-		
-		//highscore button click
-		highScoreButton.addListener(new ChangeListener(){
-			@Override
-			public void changed(ChangeEvent event, Actor actor){
-				gsm.setState(GameStateManager.HIGHSCORE);
-			}
-			});
-		
-		//highscore button touch 
-		highScoreButton.addListener(new InputListener(){
-		@Override
-		public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-			gsm.setState(GameStateManager.HIGHSCORE);
 			return true;
 		}
 		

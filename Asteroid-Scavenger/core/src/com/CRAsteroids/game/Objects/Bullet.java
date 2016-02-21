@@ -11,19 +11,21 @@ public class Bullet extends SpaceObject{
 	private float lifeTime;
 	private float lifeTimer;
 	public int bulletDamage;
+	public float enemyXPosition;
+	public float enemyYPosition;
 	
 	private boolean remove;
 	
 	public Bullet(float x, float y, float radians){
 		
-		if(PlayState.player.currentWeapon == Weapons.BULLET){
+		if(PlayState.player.currentWeapon == Weapons.BOMB){
 			this.x = x;
 			this.y = y;
 			this.radians = radians;
 			
-			bulletDamage = 5;
+			bulletDamage = 7;
 			
-			float speed = 350;
+			float speed = 250;
 			dx = MathUtils.cos(radians) * speed;
 			dy = MathUtils.sin(radians) * speed;
 			
@@ -33,14 +35,14 @@ public class Bullet extends SpaceObject{
 			lifeTime = 1;
 		}
 		
-		if(PlayState.player.currentWeapon == Weapons.SPREADBULLET){
+		if(PlayState.player.currentWeapon == Weapons.SPREADBOMB){
 			this.x = x;
 			this.y = y;
 			this.radians = radians;
 			
-			bulletDamage = 3;
+			bulletDamage = 4;
 			
-			float speed = 350;
+			float speed = 250;
 			dx = MathUtils.cos(radians) * speed;
 			dy = MathUtils.sin(radians) * speed;
 			
@@ -55,7 +57,7 @@ public class Bullet extends SpaceObject{
 			this.y = y;
 			this.radians = radians;
 			
-			bulletDamage = 3;
+			bulletDamage = 4;
 			
 			float speed = 750;
 			dx = MathUtils.cos(radians) * speed;
@@ -105,7 +107,7 @@ public class Bullet extends SpaceObject{
 	
 	public void draw(ShapeRenderer sr){
 		//player weapons
-		if(PlayState.player.currentWeapon == Weapons.BULLET || PlayState.player.currentWeapon == Weapons.SPREADBULLET){
+		if(PlayState.player.currentWeapon == Weapons.BOMB || PlayState.player.currentWeapon == Weapons.SPREADBOMB){
 			sr.setColor(0.3f, 1.0f, 0.3f, 1.0f);
 			sr.begin(ShapeType.Filled);
 			sr.circle(x, y, width / 2);
@@ -118,5 +120,6 @@ public class Bullet extends SpaceObject{
 			sr.rect(x, y, 0, 0, width, height, 1, 1, MathUtils.radiansToDegrees * radians + 180);
 			sr.end();
 		}
+		
 	}
 }
